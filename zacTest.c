@@ -19,6 +19,7 @@ int main(void){
 
 	Graph g = newGraph(5);
 
+
 	printf("Inserting 0 to 1\n");
 	insertEdge(g, 0, 1, 1);
 
@@ -41,20 +42,10 @@ int main(void){
 
 	showGraph(g);
 
-	removeEdge(g,4,0);
+	printf("%d\n",adjacent(g,4,0));
+	printf("%d\n",adjacent(g,3,2));
 
-	showGraph(g);
-	removeEdge(g,3,0);
-	removeEdge(g,2,0);
-	removeEdge(g,1,0);
-	removeEdge(g,4,1);
-	showGraph(g);
-	removeEdge(g,1,4);
-	removeEdge(g,4,1);
-	removeEdge(g,4,3);
-	removeEdge(g,4,2);
 
-	showGraph(g);
 
 
 
