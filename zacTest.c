@@ -27,16 +27,15 @@ int main(void){
 	insertEdge(g, 0, 2, 1);
 
 	printf("Inserting 0 to 3\n");
-	insertEdge(g, 0, 3, 1);
+	//insertEdge(g, 0, 3, 1);
 
 	printf("Inserting 0 to 4\n");
-	insertEdge(g, 0, 4, 1);
 
 	printf("Inserting 4 to 0\n");
-	insertEdge(g, 4, 0, 1);
-	insertEdge(g, 4, 2, 1);
+
+	insertEdge(g, 2, 4, 1);
 	insertEdge(g, 4, 3, 1);
-	insertEdge(g, 4, 1, 1);
+	insertEdge(g, 1, 4, 1);
 	insertEdge(g, 4, 333, 1);
 	insertEdge(g, 0, 0, 1);
 
@@ -44,6 +43,8 @@ int main(void){
 
 	printf("%d\n",adjacent(g,4,0));
 	printf("%d\n",adjacent(g,3,2));
+
+	inIncident(g,0);
 
 
 

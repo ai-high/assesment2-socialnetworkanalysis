@@ -62,13 +62,6 @@ void  insertEdge(Graph g, Vertex src, Vertex dest, int weight) {
 	new->next = g->adjListArray[src];
 	g->adjListArray[src] = new;
 
-	//add scr to dest
-	AdjList new2 = malloc(sizeof(AdjList));
-	new2->weight = weight;
-	new2->w = src;
-	new2->next = g->adjListArray[dest];
-	g->adjListArray[dest] = new2;
-
 	printf("Added to list\n");
 
 	
@@ -111,35 +104,6 @@ void  removeEdge(Graph g, Vertex src, Vertex dest) {
 				free(tmp);
 			}
 
-
-
-			tmp = g->adjListArray[dest];
-			//deleting from g->adjListArray[dest]
-			if(tmp->next==NULL && tmp!=g->adjListArray[dest]){
-				AdjList tmp2 = g->adjListArray[dest]; 
-				while (tmp2->next!=tmp){
-					tmp2 = tmp2->next;
-				}
-				//tmp2 pointing before tmp in adjlist
-				tmp2->next = NULL;
-				free(tmp);
-			} else if (tmp==g->adjListArray[dest] && tmp->next==NULL) {
-				g->adjListArray[dest] = NULL;
-				free(tmp);
-			} else if (tmp==g->adjListArray[dest]) {
-				g->adjListArray[dest] = tmp->next;
-				free(tmp);
-			} else {
-				AdjList tmp2 = g->adjListArray[dest];
-				while (tmp2->next!=tmp){
-					tmp2 = tmp2->next;
-				}
-				//tmp2 pointing before tmp in adjlist
-				tmp2->next = tmp->next;
-				free(tmp);
-			}
-
-
 			printf("deleted\n");
 			return;
 		}
@@ -165,11 +129,47 @@ bool adjacent(Graph g, Vertex src, Vertex dest) {
 }
 
 AdjList outIncident(Graph g, Vertex v) {
-	return NULL;
+	return g->adjListArray[v];
 }
 
 AdjList inIncident(Graph g, Vertex v) {
-	return NULL;
+
+	int i = 0;
+	AdjList list = NULL;
+	AdjList head = NULL;
+	AdjList new;
+	AdjList tmp;
+	while(i < g->nVert) {
+		tmp = g->adjListArray[i];
+		while(tmp!=NULL) {
+			if (tmp->w==v) {
+				if (list == NULL) {
+					new = malloc(sizeof(AdjList));
+					new->weight = tmp->weight;
+					new->w = i;
+					new->next = NULL;
+					list = new;
+					head = new;
+				} else {
+					new = malloc(sizeof(AdjList));
+					new->weight = tmp->weight;
+					new->w = i;
+					list->next = new;
+					list = list->next;
+					new->next = NULL;
+				}
+			}
+			tmp = tmp->next;
+		}
+		i++;
+	}
+
+	AdjList ret = head;
+	while(ret!=NULL) {
+		printf(" *%d* ",ret->w);
+		ret = ret->next;
+	}
+	return head;
 }
 
 void  showGraph(Graph g) {
