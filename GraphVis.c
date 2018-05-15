@@ -7,7 +7,7 @@
  *
  * 13/5/18 - zain.afz@gmail.com
  */
-#include "GraphVis.h"
+/*#include "GraphVis.h"
 #include "CentralityMeasures.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -93,3 +93,4 @@ void graphVis(Graph g, int mode) {
   char * res = getcwd(cwd, 1024);
   printf("See Graph: file://%s/graphVisFiles/seeGraph.html\n",res);
 }
+*/

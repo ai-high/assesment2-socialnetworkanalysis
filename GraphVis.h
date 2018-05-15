@@ -1,4 +1,4 @@
-#ifndef _CS2521_GRAPH_VIS_H
+/*#ifndef _CS2521_GRAPH_VIS_H
 #define _CS2521_GRAPH_VIS_H
 
 #include "Graph.h"
@@ -11,4 +11,4 @@
 #define BETWEENNESS 5
 
 void graphVis(Graph g, int mode);
-#endif
+#endif*/
