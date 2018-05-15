@@ -10,8 +10,6 @@ typedef struct GraphRep {
 	int nVert;
 	AdjList * adjListArray;
 
-	// AdjList = adjListNode*
-
 } GraphRep;
 
 
@@ -49,8 +47,8 @@ void  insertEdge(Graph g, Vertex src, Vertex dest, int weight) {
 	AdjList tmp;
 	tmp = g->adjListArray[src];
 	while(tmp!=NULL){
-		printf("1");
 		if (tmp->w==dest) {
+			printf("Already in list\n");
 			return;
 		}
 		tmp = tmp->next;
@@ -71,7 +69,7 @@ void  insertEdge(Graph g, Vertex src, Vertex dest, int weight) {
 	new2->next = g->adjListArray[dest];
 	g->adjListArray[dest] = new2;
 
-	g->nVert++;
+	printf("Added to list\n");
 
 	
 }
@@ -86,8 +84,11 @@ void  removeEdge(Graph g, Vertex src, Vertex dest) {
 	while(tmp!=NULL){
 		if (tmp->w==dest) {
 			//found connecton from v to w
-			if(tmp->next==NULL){
-				AdjList tmp2 = g->adjListArray[src];
+
+
+			//deleting from g->adjListArray[src]
+			if(tmp->next==NULL && tmp!=g->adjListArray[src]){
+				AdjList tmp2 = g->adjListArray[src]; 
 				while (tmp2->next!=tmp){
 					tmp2 = tmp2->next;
 				}
@@ -106,10 +107,39 @@ void  removeEdge(Graph g, Vertex src, Vertex dest) {
 				tmp2->next = tmp->next;
 				free(tmp);
 			}
-			g->nVert--;
+
+
+
+			tmp = g->adjListArray[dest];
+			//deleting from g->adjListArray[dest]
+			if(tmp->next==NULL && tmp!=g->adjListArray[dest]){
+				AdjList tmp2 = g->adjListArray[dest]; 
+				while (tmp2->next!=tmp){
+					tmp2 = tmp2->next;
+				}
+				//tmp2 pointing before tmp in adjlist
+				tmp2->next = NULL;
+				free(tmp);
+			} else if (tmp==g->adjListArray[dest]) {
+				g->adjListArray[dest] = NULL;
+				free(tmp);
+			} else {
+				AdjList tmp2 = g->adjListArray[dest];
+				while (tmp2->next!=tmp){
+					tmp2 = tmp2->next;
+				}
+				//tmp2 pointing before tmp in adjlist
+				tmp2->next = tmp->next;
+				free(tmp);
+			}
+
+
+			printf("deleted\n");
+			return;
 		}
 		tmp = tmp->next;
 	}
+	printf("nothing deleted\n");
 
 }
 
@@ -126,6 +156,21 @@ AdjList inIncident(Graph g, Vertex v) {
 }
 
 void  showGraph(Graph g) {
+
+	int i = 0;
+	printf("%d",g->nVert);
+	while(i < g->nVert) {
+		AdjList tmp = g->adjListArray[i];
+		printf("\n || %d ||",i);
+		while(tmp!=NULL){
+			printf("---> { %d } ",tmp->w);
+			tmp = tmp->next;
+		}
+		printf(" ---> NULL\n");
+
+		i++;
+	}
+	printf("\n");
 
 }
 

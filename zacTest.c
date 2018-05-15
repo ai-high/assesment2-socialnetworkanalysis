@@ -19,9 +19,23 @@ int main(void){
 
 	Graph g = newGraph(5);
 
-	printf("%d\n",numVerticies(g));
+	printf("Inserting 0 to 1\n");
 	insertEdge(g, 0, 1, 1);
-	insertEdge(g, 0, 1, 1);
+
+	printf("Inserting 0 to 2\n");
+	insertEdge(g, 0, 2, 1);
+
+	printf("Inserting 0 to 3\n");
+	insertEdge(g, 0, 3, 1);
+
+	printf("Inserting 0 to 4\n");
+	insertEdge(g, 0, 4, 1);
+
+	printf("Inserting 4 to 0\n");
+	insertEdge(g, 4, 0, 1);
+
+	showGraph(g);
+
 
 
 
