@@ -33,8 +33,30 @@ int main(void){
 
 	printf("Inserting 4 to 0\n");
 	insertEdge(g, 4, 0, 1);
+	insertEdge(g, 4, 2, 1);
+	insertEdge(g, 4, 3, 1);
+	insertEdge(g, 4, 1, 1);
+	insertEdge(g, 4, 333, 1);
+	insertEdge(g, 0, 0, 1);
 
 	showGraph(g);
+
+	removeEdge(g,4,0);
+
+	showGraph(g);
+	removeEdge(g,3,0);
+	removeEdge(g,2,0);
+	removeEdge(g,1,0);
+	removeEdge(g,4,1);
+	showGraph(g);
+	removeEdge(g,1,4);
+	removeEdge(g,4,1);
+	removeEdge(g,4,3);
+	removeEdge(g,4,2);
+
+	showGraph(g);
+
+
 
 
 

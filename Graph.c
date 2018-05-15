@@ -41,8 +41,8 @@ int numVerticies(Graph g) {
 
 void  insertEdge(Graph g, Vertex src, Vertex dest, int weight) {
 
-	assert(src<=g->nVert);
-	assert(dest<=g->nVert);
+	if (src>g->nVert || dest>g->nVert || src == dest)
+		return;
 	// check if dest is in g->adjListArray[src]
 	AdjList tmp;
 	tmp = g->adjListArray[src];
@@ -76,8 +76,8 @@ void  insertEdge(Graph g, Vertex src, Vertex dest, int weight) {
 
 void  removeEdge(Graph g, Vertex src, Vertex dest) {
 
-	assert(src<=g->nVert);
-	assert(dest<=g->nVert);
+	if (src>g->nVert || dest>g->nVert || src == dest)
+		return;
 	// check if dest is in g->adjListArray[src]
 	AdjList tmp;
 	tmp = g->adjListArray[src];
@@ -88,6 +88,7 @@ void  removeEdge(Graph g, Vertex src, Vertex dest) {
 
 			//deleting from g->adjListArray[src]
 			if(tmp->next==NULL && tmp!=g->adjListArray[src]){
+				printf("1");
 				AdjList tmp2 = g->adjListArray[src]; 
 				while (tmp2->next!=tmp){
 					tmp2 = tmp2->next;
@@ -95,10 +96,16 @@ void  removeEdge(Graph g, Vertex src, Vertex dest) {
 				//tmp2 pointing before tmp in adjlist
 				tmp2->next = NULL;
 				free(tmp);
-			} else if (tmp==g->adjListArray[src]) {
+			} else if (tmp==g->adjListArray[src] && tmp->next==NULL) {
+				printf("2");
 				g->adjListArray[src] = NULL;
 				free(tmp);
+			} else if (tmp==g->adjListArray[src]) {
+				printf("3");
+				g->adjListArray[src] = tmp->next;
+				free(tmp);
 			} else {
+				printf("4");
 				AdjList tmp2 = g->adjListArray[src];
 				while (tmp2->next!=tmp){
 					tmp2 = tmp2->next;
@@ -113,6 +120,7 @@ void  removeEdge(Graph g, Vertex src, Vertex dest) {
 			tmp = g->adjListArray[dest];
 			//deleting from g->adjListArray[dest]
 			if(tmp->next==NULL && tmp!=g->adjListArray[dest]){
+				printf("5");
 				AdjList tmp2 = g->adjListArray[dest]; 
 				while (tmp2->next!=tmp){
 					tmp2 = tmp2->next;
@@ -120,10 +128,16 @@ void  removeEdge(Graph g, Vertex src, Vertex dest) {
 				//tmp2 pointing before tmp in adjlist
 				tmp2->next = NULL;
 				free(tmp);
-			} else if (tmp==g->adjListArray[dest]) {
+			} else if (tmp==g->adjListArray[dest] && tmp->next==NULL) {
+				printf("6");
 				g->adjListArray[dest] = NULL;
 				free(tmp);
+			} else if (tmp==g->adjListArray[dest]) {
+				printf("7");
+				g->adjListArray[dest] = tmp->next;
+				free(tmp);
 			} else {
+				printf("8");
 				AdjList tmp2 = g->adjListArray[dest];
 				while (tmp2->next!=tmp){
 					tmp2 = tmp2->next;
@@ -158,7 +172,6 @@ AdjList inIncident(Graph g, Vertex v) {
 void  showGraph(Graph g) {
 
 	int i = 0;
-	printf("%d",g->nVert);
 	while(i < g->nVert) {
 		AdjList tmp = g->adjListArray[i];
 		printf("\n || %d ||",i);
