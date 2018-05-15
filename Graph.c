@@ -191,5 +191,17 @@ void  showGraph(Graph g) {
 }
 
 void  freeGraph(Graph g) {
+	int i = 0;
+	while(i < g->nVert) {
+		AdjList tmp = g->adjListArray[i];
+		while(tmp!=NULL){
+			AdjList del = tmp;
+			free(del);
+			tmp = tmp->next;
+		}
+		i++;
+	}
+	free(g);
+
 
 }

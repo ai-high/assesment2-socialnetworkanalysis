@@ -46,6 +46,8 @@ int main(void){
 
 	inIncident(g,0);
 
+	freeGraph(g);
+
 
 
 
