@@ -1,1 +1,0 @@
-# assesment2-socialnetworkanalysis
