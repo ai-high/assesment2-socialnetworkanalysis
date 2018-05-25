@@ -5,18 +5,18 @@
 #include <assert.h>
 
 
-typedef struct PQRep {
+struct PQRep {
 	int size;
 	ItemPQ *item;  // current item
-} PQ;
+};
 
 PQ newPQ() {
 	PQ *pq;
-	if (pq = malloc(sizeof(PQ)) == NULL) {
-		fprintf(stderr, "Error!\n", );
+	if ((pq = malloc(sizeof(PQ))) == NULL) {
+		fprintf(stderr, "Error!\n");
 	}
 	int initial_size = 16;
-	pq->item = malloc(sizeof(ItemPQ))*(initial_size + 1)
+	pq->item = malloc(sizeof(ItemPQ))*(initial_size + 1);
 	pq->size = 0;
 	return pq;
 }
