@@ -43,6 +43,7 @@ ItemPQ dequeuePQ(PQ pq) {
 	ItemPQ *item = pq->item;
 	ItemPQ *tmp = item[1];
 	item[1] = item[pq->size];
+	pq->size--;
 	updatePQ(pq, item);
 	return tmp;
 }
