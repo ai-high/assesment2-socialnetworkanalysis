@@ -3,11 +3,15 @@
 #include <stdio.h>
 
 int main() {
-    int i;
     PQ pq = newPQ();
-    ItemPQ *new = malloc(sizeof(struct ItemPQ));
-    new->value = 100;
-    srand(time(NULL));
-    printf("%d\n", new->value);
+    ItemPQ new;
+    new.value = 100;
+    new.key = 1;
+    addPQ(pq, new);
+    showPQ(pq);
+    printf("%d\n", pq->size);
+    dequeuePQ(pq);
+    showPQ(pq);
+    printf("%d\n", pq->size);
     return 0;
 }

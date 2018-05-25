@@ -3,22 +3,20 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-
+#include <time.h>
 
 typedef struct PQRep {
 	int size;
 	ItemPQ *item;
 } PQRep;
 
-// yeah nah
-
 PQ newPQ() {
-	PQRep *pq;
-	if ((pq = malloc(sizeof(struct PQRep))) == NULL) {
+	PQ pq;
+	if ((pq = malloc(sizeof(PQ))) == NULL) {
 		fprintf(stderr, "Error!\n");
 	}
 	int initial_size = 16;
-	pq->item = malloc(sizeof(struct ItemPQ)*(initial_size + 1));
+	pq->item = malloc(sizeof(ItemPQ)*(initial_size + 1));
 	pq->size = 0;
 	return pq;
 }
@@ -72,13 +70,14 @@ void updatePQ(PQ pq, ItemPQ element) {
 }
 
 void  showPQ(PQ pq) {
-	printf("Value in priority queue:");
-	for (int i = 1; i <= pq->size; i++) {
+	printf("Value in priority queue: ");
+	int i;
+	for (i = 1; i <= pq->size; i++) {
 		printf("%d ", pq->item[i].value);
 	}
 	printf("\n");
-	printf("Key in priority queue:");
-	for (int i = 1; i <= pq->size; i++) {
+	printf("Key in priority queue: ");
+	for (i = 1; i <= pq->size; i++) {
 		printf("%d ", pq->item[i].key);
 	}
 	printf("\n");
