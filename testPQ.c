@@ -13,5 +13,6 @@ int main() {
     dequeuePQ(pq);
     showPQ(pq);
     printf("%d\n", pq->size);
+    printf("testing\n");
     return 0;
 }
