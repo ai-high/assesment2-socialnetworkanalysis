@@ -11,14 +11,14 @@ int main(){
 	// how to use graph vis
 
   Graph g = newGraph(5);
-
   insertEdge(g,1,2,1);
   insertEdge(g,2,1,10);
   insertEdge(g,4,2,60);
-	insertEdge(g,3,2,6);
+  insertEdge(g,3,2,6);
+  insertEdge(g,0,4,69);
   showGraph(g);
 
 	// draws the graph
-  //graphVis(g, DEFAULT);
+  graphVis(g, DEFAULT);
 	return EXIT_SUCCESS;
 }
