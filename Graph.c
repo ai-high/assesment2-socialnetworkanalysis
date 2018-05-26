@@ -17,7 +17,7 @@ Graph newGraph(int noNodes) {
 
 
 	Graph g;
-	if((g = malloc(sizeof(GraphRep))) == NULL){
+	if((g= malloc(sizeof(GraphRep))) == NULL){
 		fprintf(stderr, "Error!!  .... \n");
 	}
 	g->nVert = noNodes;
@@ -48,6 +48,7 @@ void  insertEdge(Graph g, Vertex src, Vertex dest, int weight) {
 	tmp = g->adjListArray[src];
 	while(tmp!=NULL){
 		if (tmp->w==dest) {
+			printf("Already in list\n");
 			return;
 		}
 		tmp = tmp->next;
@@ -60,6 +61,9 @@ void  insertEdge(Graph g, Vertex src, Vertex dest, int weight) {
 	new->w = dest;
 	new->next = g->adjListArray[src];
 	g->adjListArray[src] = new;
+
+	printf("Added to list\n");
+
 	
 }
 
@@ -99,11 +103,13 @@ void  removeEdge(Graph g, Vertex src, Vertex dest) {
 				tmp2->next = tmp->next;
 				free(tmp);
 			}
+
+			printf("deleted\n");
 			return;
 		}
 		tmp = tmp->next;
 	}
-
+	printf("nothing deleted\n");
 
 }
 
@@ -112,6 +118,7 @@ bool adjacent(Graph g, Vertex src, Vertex dest) {
 	AdjList tmp = g->adjListArray[src];
 	while(tmp!=NULL){
 		if (tmp->w==dest) {
+			printf("FOUND");
 			return true;
 		}
 		tmp = tmp->next;
@@ -159,6 +166,7 @@ AdjList inIncident(Graph g, Vertex v) {
 
 	AdjList ret = head;
 	while(ret!=NULL) {
+		printf(" *%d* ",ret->w);
 		ret = ret->next;
 	}
 	return head;

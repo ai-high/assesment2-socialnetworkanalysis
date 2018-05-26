@@ -89,7 +89,7 @@ void  freePQ(PQ pq) {
 	free(pq);
 }
 
-/*int main(void) {
+int main(void) {
     int i;
     PQ pq = newPQ();
     ItemPQ new;
@@ -166,4 +166,4 @@ void  freePQ(PQ pq) {
 
     // freePQ(pq);
     return 0;
-}*/
+}
