@@ -76,6 +76,7 @@ void displayShortestPathsStruct(ShortestPaths sps){
 }
 
 int main(int argc, char* argv[]){
+	
 	if(argc < 2) {
 		printf("Usage: ./testDijkstra [file]\n");
 		return EXIT_FAILURE;
@@ -87,4 +88,5 @@ int main(int argc, char* argv[]){
     displayShortestPathsStruct(paths);
     freeShortestPaths(paths);
   }
+
 }
