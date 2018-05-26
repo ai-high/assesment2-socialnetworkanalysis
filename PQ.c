@@ -72,7 +72,7 @@ void updatePQ(PQ pq, ItemPQ element) {
 }
 
 void  showPQ(PQ pq) {
-	printf("Value in priority queue: ");
+	/*printf("Value in priority queue: ");
 	for (int i = 1; i <= pq->size; i++) {
 		printf("%d ", pq->item[i].value);
 	}
@@ -81,7 +81,12 @@ void  showPQ(PQ pq) {
 	// for (int i = 1; i <= pq->size; i++) {
 	// 	printf("%d ", pq->item[i].key);
 	// }
-	printf("\n");
+	printf("\n");*/
+    for (int i = 1; i <= pq->size; i++) {
+        printf("| key: %d | value: %d |\n",pq->item[i].key, pq->item[i].value);
+    }
+    printf("\n");
+
 }
 
 void  freePQ(PQ pq) {
@@ -89,7 +94,7 @@ void  freePQ(PQ pq) {
 	free(pq);
 }
 
-int main(void) {
+/*int main(void) {
     int i;
     PQ pq = newPQ();
     ItemPQ new;
@@ -166,4 +171,4 @@ int main(void) {
 
     // freePQ(pq);
     return 0;
-}
+}*/
