@@ -53,6 +53,7 @@ void shiftDown(PQ pq, int id) {
 	int swapChild;
 	int breakLoop = 0;
 	while(true) {
+		// printf("whatasdasd??\n");
 		left_child = getLeftChild(id);
 		right_child = getRightChild(id);
 		parent = id;
@@ -71,6 +72,8 @@ void shiftDown(PQ pq, int id) {
 		if (pq->item[parent].value > pq->item[swapChild].value) {
 			swapItems(pq, parent, swapChild);
 			id = swapChild;
+		} else {
+			break;
 		}
 		if (breakLoop == 1) {
 			break;
@@ -110,7 +113,7 @@ PQ newPQ() {
 
 void addPQ(PQ pq, ItemPQ element) {
 	int check = checkKey(pq, element);
-	if (check == 1) {
+	if (check == 0) {
 		// if added item's key already exists
 		updatePQ(pq, element);
 	} else {
@@ -152,7 +155,7 @@ void updatePQ(PQ pq, ItemPQ element) {
 				shiftUp(pq, id);
 			}
 		// if element is the first one
-		} else if (parent == 1) {
+		} else if (id == 1) {
 			shiftDown(pq, id);
 		} else if (pq->item[id].value > pq->item[parent].value) {		// check if element is greater than parent
 			shiftDown(pq, id);
