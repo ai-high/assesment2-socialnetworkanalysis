@@ -53,5 +53,9 @@ int main() {
     remove = dequeuePQ(pq);
     printf("REMOVING %d\n", remove.value);
     showPQ(pq);
+
+    remove = dequeuePQ(pq);
+    printf("REMOVING %d\n", remove.value);
+    showPQ(pq);
     return 0;
 }

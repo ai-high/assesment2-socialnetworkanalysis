@@ -62,7 +62,7 @@ void shiftDown(PQ pq, int id) {
 			}
 			swapChild = left_child;
 			breakLoop = 1;
-		} else if (pq->item[left_child].value > pq->item[right_child].value) {  // check which child is the greatest
+		} else if (pq->item[left_child].value < pq->item[right_child].value) {  // check which child is smallest
 			swapChild = left_child; 
 		} else {
 			swapChild = right_child;
