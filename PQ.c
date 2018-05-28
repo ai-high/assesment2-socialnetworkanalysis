@@ -45,6 +45,7 @@ void shiftUp(PQ pq, int id) {
 	}
 }
 
+// not yet
 void shiftDown(PQ pq, int id) {
 	int left_child;
 	int right_child;

@@ -49,5 +49,9 @@ int main() {
     updatePQ(pq, *change);
     showPQ(pq);
 
+    ItemPQ remove;
+    remove = dequeuePQ(pq);
+    printf("REMOVING %d\n", remove.value);
+    showPQ(pq);
     return 0;
 }
