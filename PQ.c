@@ -78,7 +78,6 @@ void shiftDown(PQ pq, int id) {
 	}
 }
 
-// is key unique?
 int getItemID(PQ pq, ItemPQ element) {
 	for (int id = 1; id <= pq->size; id++) {
 		if (pq->item[id].key == element.key) {
@@ -86,6 +85,15 @@ int getItemID(PQ pq, ItemPQ element) {
 		}
 	}
 	return -1;
+}
+
+int checkKey(PQ pq, ItemPQ element) {
+	for (int id = 1; id <= pq->size; id++) {
+		if (pq->item[id].key == element.key) {
+			return 0;
+		}
+	}
+	return 1;
 }
 
 PQ newPQ() {
@@ -101,12 +109,18 @@ PQ newPQ() {
 }
 
 void addPQ(PQ pq, ItemPQ element) {
-	int id = pq->size + 1;
-	pq->item[id] = element;
-	pq->size++;
-	if (pq->size > 1) {
-		shiftUp(pq, id);
-	}	
+	int check = checkKey(pq, element);
+	if (check == 1) {
+		// if added item's key already exists
+		updatePQ(pq, element);
+	} else {
+		int id = pq->size + 1;
+		pq->item[id] = element;
+		pq->size++;
+		if (pq->size > 1) {
+			shiftUp(pq, id);
+		}	
+	}
 }
 
 ItemPQ dequeuePQ(PQ pq) {
