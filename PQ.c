@@ -77,6 +77,7 @@ void shiftDown(PQ pq, int id) {
 	}
 }
 
+// is key unique?
 int getItemID(PQ pq, ItemPQ element) {
 	for (int id = 1; id <= pq->size; id++) {
 		if (pq->item[id].key == element.key) {
