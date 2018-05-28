@@ -17,11 +17,11 @@ ShortestPaths dijkstra(Graph g, Vertex v) {
 	for (int i = 0; i < sp.noNodes; i++) {
 		if (i!=v) {
 			sp.dist[i] = INFINITY;
-			sp.pred[i] = NULL;
 			item.key = i;
 			item.value = INFINITY;
 			addPQ(pq, item);
 		}
+		sp.pred[i] = NULL;
 	}
 	sp.dist[v] = 0;
 	item.key = v;
@@ -31,6 +31,8 @@ ShortestPaths dijkstra(Graph g, Vertex v) {
 	int newDist;
 	while (PQEmpty(pq)==0) {
 		item = dequeuePQ(pq);
+		printf("Item dequeded:  ");
+		printf("| key: %d | value: %d |\n",item.key, item.value);
 		int src = item.key;
 		AdjList verts = outIncident(g, src);
 		//printf("_____________________ %d ____________\n\n", src);
@@ -38,19 +40,22 @@ ShortestPaths dijkstra(Graph g, Vertex v) {
 			int dest = verts->w;
 			newDist = sp.dist[src] + verts->weight;
 			if (newDist < sp.dist[dest]) {
+				item.key = dest;
+				item.value = newDist;
+				updatePQ(pq, item);
 				sp.dist[dest] = newDist;
 				PredNode *new = malloc(sizeof(PredNode));
-				new->v = dest;
+				new->v = src;
 				new->next = NULL;
-				sp.pred[src] = new; 
+				sp.pred[dest] = new; 
 			}
 			//for (int i = 0; i < sp.noNodes; i++) {
-				///printf(" [%d] ",sp.dist[i]);
+			//	printf(" [%d] ",sp.dist[i]);
 			//}
 			//printf("\n");
 			verts = verts->next;
 		}
-		//showPQ(pq);
+		showPQ(pq);
 	}
 
 	//for (int i = 0; i < sp.noNodes; i++) {

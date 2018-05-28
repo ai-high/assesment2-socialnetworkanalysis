@@ -20,7 +20,7 @@ Graph newGraph(int noNodes) {
 	if((g= malloc(sizeof(GraphRep))) == NULL){
 		fprintf(stderr, "Error!!  .... \n");
 	}
-	g->nVert = noNodes;
+	g->nVert = noNodes+1;
 
 	//malloc and init adjList
 	if((g->adjListArray = malloc(sizeof(AdjList)*noNodes)) == NULL){
@@ -36,7 +36,7 @@ Graph newGraph(int noNodes) {
 }
 
 int numVerticies(Graph g) {
-	return g->nVert+1;
+	return g->nVert;
 }
 
 void  insertEdge(Graph g, Vertex src, Vertex dest, int weight) {
