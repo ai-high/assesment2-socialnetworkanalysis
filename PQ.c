@@ -3,172 +3,157 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
-#include <time.h>
 
 typedef struct PQRep {
 	int size;
 	ItemPQ *item;
 } PQRep;
 
-// yeah nah
+int getRightChild(int id) {
+	return 2*id + 1;
+}
 
-PQ newPQ() {
-	PQ pq;
-	if ((pq = malloc(sizeof(PQ))) == NULL) {
-		fprintf(stderr, "Error!\n");
-	}
-	int initial_size = 16;
-	pq->item = malloc(sizeof(ItemPQ)*(initial_size + 1));
-	pq->size = 0;
-	return pq;
+int getLeftChild(int id) {
+	return 2*id;
+}
+
+int getParent(int id) {
+	return id/2;
 }
 
 int PQEmpty(PQ pq) {
 	return (pq->size == 0);
 }
 
-void addPQ(PQ pq, ItemPQ element) {
-	int i = pq->size + 1;
-	ItemPQ *item = pq->item;
-	item[i] = element;
-	while ((item[i].value < item[i/2].value) && (i > 1)) {
-		ItemPQ tmp;
-		tmp = item[i/2];
-		item[i/2] = item[i];
-		item[i] = tmp;
-		i = i/2;
+void swapItems(PQ pq, int id1, int id2) {
+	ItemPQ tmp = pq->item[id1];
+	pq->item[id1] = pq->item[id2];
+	pq->item[id2] = tmp; 
+}
+
+void shiftUp(PQ pq, int id) {
+	while (id != 0) {
+		int parent = getParent(id);
+		// if child is greater than the parent, do nothing
+		if (pq->item[id].value > pq->item[parent].value) {
+			break;
+		} else {
+			// swap parent and child item
+			swapItems(pq, id, parent);
+		}
+		id = parent;
 	}
+}
+
+void shiftDown(PQ pq, int id) {
+	int left_child;
+	int right_child;
+	int parent;
+	int swapChild;
+	int breakLoop = 0;
+	while(true) {
+		left_child = getLeftChild(id);
+		right_child = getRightChild(id);
+		parent = id;
+		if (right_child > pq->size) {
+			if (left_child > pq->size) {
+				break;
+			}
+			swapChild = left_child;
+			breakLoop = 1;
+		} else if (pq->item[left_child].value > pq->item[right_child].value) {  // check which child is the greatest
+			swapChild = left_child; 
+		} else {
+			swapChild = right_child;
+		}
+		// if child is smaller than parent
+		if (pq->item[parent].value > pq->item[swapChild].value) {
+			swapItems(pq, parent, swapChild);
+			id = swapChild;
+		}
+		if (breakLoop == 1) {
+			break;
+		}
+	}
+}
+
+int getItemID(PQ pq, ItemPQ element) {
+	for (int id = 1; id <= pq->size; id++) {
+		if (pq->item[id].key == element.key) {
+			return id;
+		}
+	}
+	return -1;
+}
+
+PQ newPQ() {
+	PQ pq;
+	if ((pq = malloc(sizeof(PQ))) == NULL) {
+		fprintf(stderr, "Error!\n");
+	}
+	// size to malloc memory
+	int initial_size = 16;
+	pq->item = malloc(sizeof(ItemPQ)*(initial_size + 1));
+	pq->size = 0;
+	return pq;
+}
+
+void addPQ(PQ pq, ItemPQ element) {
+	int id = pq->size + 1;
+	pq->item[id] = element;
 	pq->size++;
+	if (pq->size > 1) {
+		shiftUp(pq, id);
+	}	
 }
 
 ItemPQ dequeuePQ(PQ pq) {
 	ItemPQ returned = pq->item[1];
 	pq->item[1] = pq->item[pq->size];
 	pq->size--;
-	ItemPQ tmp;
-	updatePQ(pq, tmp);
+	// make sure there is something in the queue when shifting down
+	if (pq->size > 0) {
+		shiftDown(pq, 1);
+	}
 	return returned;
 }
 
 void updatePQ(PQ pq, ItemPQ element) {
-	int index = 1;
-	int current = 0;
-	ItemPQ tmp;
-	// ItemPQ *item = element;
-	while (current < pq->size) {
-		current = 2*index;
-		if (pq->item[current].value > pq->item[current + 1].value) {
-			current++;
-		}
-		if (pq->item[current].value < pq->item[index].value) {
-			tmp = pq->item[current];
-			pq->item[current] = pq->item[index];
-			pq->item[index] = tmp;
-			index = current;
-		} else {
-			break;
+	int id = getItemID(pq, element);
+	if (id == -1) {
+		printf("ITEM IS NOT INSIDE QUEUE\n");
+		exit(1);
+	} else {
+		pq->item[id].value = element.value;
+		int parent = getParent(id);
+		int left_child = getLeftChild(id);
+		int right_child = getRightChild(id);
+		// if element is at bottom/end
+		if ((left_child > pq->size) && (right_child > pq->size)) {
+			// then check if element is less than element
+			if (pq->item[id].value < pq->item[parent].value) {
+				// probably don't need above if statement. shiftUp does the check
+				shiftUp(pq, id);
+			}
+		// if element is the first one
+		} else if (parent == 1) {
+			shiftDown(pq, id);
+		} else if (pq->item[id].value > pq->item[parent].value) {		// check if element is greater than parent
+			shiftDown(pq, id);
+		} else {						// else if element is smaller than children
+			shiftUp(pq, id);
 		}
 	}
 }
 
 void  showPQ(PQ pq) {
-	/*printf("Value in priority queue: ");
-	for (int i = 1; i <= pq->size; i++) {
-		printf("%d ", pq->item[i].value);
-	}
-	printf("\n");
-	// printf("Key in priority queue: ");
-	// for (int i = 1; i <= pq->size; i++) {
-	// 	printf("%d ", pq->item[i].key);
-	// }
-	printf("\n");*/
     for (int i = 1; i <= pq->size; i++) {
         printf("| key: %d | value: %d |\n",pq->item[i].key, pq->item[i].value);
     }
     printf("\n");
-
 }
 
 void  freePQ(PQ pq) {
 	free(pq->item);
 	free(pq);
 }
-
-/*int main(void) {
-    int i;
-    PQ pq = newPQ();
-    ItemPQ new;
-    srand(time(NULL));
-    for (i = 1; i < 9; i++) {
-        new.value = rand()%10000;
-        printf("add node with value: %d\n", new.value);
-        addPQ(pq, new);
-    }
-    showPQ(pq);
-    printf("\ndequeue all values:\n");
-    for (i = 1; i < 9; i++) {
-        new = dequeuePQ(pq);
-        printf("remove node with value: %d, queue size after removal: %d\n", new.value, pq->size);
-        showPQ(pq);
-    }
-    freePQ(pq);
-
-    // PQ pq = newPQ();
-    // ItemPQ new;
-    // srand(time(NULL));
-    // new.value = rand()%100;
-    // printf("adding %d\n", new.value);
-    // addPQ(pq, new);
-
-    // showPQ(pq);
-    // new.value = rand()%100;
-    // printf("adding %d\n", new.value);
-    // addPQ(pq, new);
-
-    // showPQ(pq);
-    // // printf("second: %d\n\n", pq->item[pq->size/2].value);
-    // new.value = rand()%100;
-    // printf("adding %d\n", new.value);
-    // addPQ(pq, new);
-
-    // showPQ(pq);
-    // // printf("second: %d\n\n", pq->item[pq->size/2].value);
-    // new.value = rand()%100;
-    // printf("adding %d\n", new.value);
-    // addPQ(pq, new);
-
-    // showPQ(pq);
-    // // printf("second: %d\n\n", pq->item[pq->size/2].value);
-    // new.value = rand()%100;
-    // printf("adding %d\n", new.value);
-    // addPQ(pq, new);
-
-    // showPQ(pq);
-    // // printf("second: %d\n\n", pq->item[pq->size/2].value);
-    // new.value = rand()%100;
-    // printf("adding %d\n", new.value);
-    // addPQ(pq, new);
-
-    // showPQ(pq);
-    // // printf("second: %d\n\n", pq->item[pq->size/2].value);
-    // new.value = rand()%100;
-    // printf("adding %d\n", new.value);
-    // addPQ(pq, new);
-
-    // showPQ(pq);
-
-    // ItemPQ remove = dequeuePQ(pq);
-    // printf("removed %d\n", remove.value);
-    // showPQ(pq);
-
-    // remove = dequeuePQ(pq);
-    // printf("removed %d\n", remove.value);
-    // showPQ(pq);
-
-    // remove = dequeuePQ(pq);
-    // printf("removed %d\n", remove.value);
-    // showPQ(pq);
-
-    // freePQ(pq);
-    return 0;
-}*/
