@@ -36,7 +36,7 @@ Graph newGraph(int noNodes) {
 }
 
 int numVerticies(Graph g) {
-	return g->nVert;
+	return g->nVert+1;
 }
 
 void  insertEdge(Graph g, Vertex src, Vertex dest, int weight) {
@@ -48,7 +48,6 @@ void  insertEdge(Graph g, Vertex src, Vertex dest, int weight) {
 	tmp = g->adjListArray[src];
 	while(tmp!=NULL){
 		if (tmp->w==dest) {
-			printf("Already in list\n");
 			return;
 		}
 		tmp = tmp->next;
@@ -62,7 +61,6 @@ void  insertEdge(Graph g, Vertex src, Vertex dest, int weight) {
 	new->next = g->adjListArray[src];
 	g->adjListArray[src] = new;
 
-	printf("Added to list\n");
 
 	
 }

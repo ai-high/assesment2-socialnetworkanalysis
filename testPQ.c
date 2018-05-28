@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 int main() {
-    PQ pq = newPQ();
+    /*PQ pq = newPQ();
     ItemPQ new;
     new.value = 100;
     new.key = 1;
@@ -12,7 +12,7 @@ int main() {
     printf("%d\n", pq->size);
     dequeuePQ(pq);
     showPQ(pq);
-    printf("%d\n", pq->size);
+    //printf("%d\n", pq->size);
     printf("testing\n");
-    return 0;
+    return 0;*/
 }
