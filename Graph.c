@@ -164,7 +164,6 @@ AdjList inIncident(Graph g, Vertex v) {
 
 	AdjList ret = head;
 	while(ret!=NULL) {
-		printf(" *%d* ",ret->w);
 		ret = ret->next;
 	}
 	return head;

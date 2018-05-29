@@ -24,8 +24,21 @@ NodeValues outDegreeCentrality(Graph g){
 	return *values;
 }
 NodeValues inDegreeCentrality(Graph g){
-	NodeValues throwAway = {0};
-	return throwAway;
+	NodeValues *values = malloc(sizeof(NodeValues));
+	values->noNodes = numVerticies(g);
+	values->values = malloc(sizeof(double)*numVerticies(g));
+	int count;
+	for (int i = 0; i < numVerticies(g); i++)
+	{
+		count = 0;
+		AdjList out = inIncident(g,i);
+		while(out!=NULL) {
+			count++;
+			out = out->next;
+		}
+		values->values[i] = count;
+	}
+	return *values;
 }
 NodeValues degreeCentrality(Graph g) {
 	NodeValues throwAway = {0};
