@@ -66,13 +66,13 @@ ItemPQ dequeuePQ(PQ pq) {
 	while (tmp!=NULL) {
 		if (tmp->item.value < lowest) {
 			save = tmp;
-			dequeued = tmp->item;
 			lowest = tmp->item.value;
 			printf("lowest: %d\n",lowest);
 		}
 		trail = tmp;
 		tmp = tmp->next;
 	}
+	dequeued = save->item;
 	trail = NULL;
 	tmp = pq->first;
 	while (tmp!=save) {
