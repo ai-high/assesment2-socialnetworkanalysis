@@ -94,21 +94,23 @@ NodeValues betweennessCentrality(Graph g){
 		divisor[i] = 0;
 	}
 
+	double count;
 	for (int i = 0; i < numVerticies(g); i++) {
 		ShortestPaths paths = dijkstra(g, i);
 		for (int j = 0; j < numVerticies(g); j++)
 		{
+			count = 0;
 			if (paths.pred[j]!=NULL) {
 				PredNode *tmp = paths.pred[j];
-				PredNode *tmp2 = paths.pred[j];
 				while(tmp!=NULL){
-					if (tmp->v!=i) {
-						numerator[tmp->v]++;
-						while(tmp2!=NULL){
-							divisor[tmp->v]++;
-							tmp2 = tmp2->next;
-						}
+					count++;
+					int x = tmp->v;
+					while(x!=i){
+						numerator[x]++;
+						divisor[x] = divisor[x] + count;
+						x = paths.pred[x]->v;
 					}
+
 					tmp = tmp->next;
 				}
 			}
