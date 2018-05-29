@@ -43,7 +43,7 @@ Graph readGraph(char* file) {
 	}
 	fclose(f);
 
-	Graph g = newGraph(maxVert);
+	Graph g = newGraph(maxVert+1);
 	i = 0;
 	while(i < lines) {
 		insertEdge(g,nums[i][0],nums[i][1],nums[i][2]);
@@ -71,9 +71,31 @@ int main(void){
   	showGraph(g);
 	dijkstra(g, 0);*/
 
-	Graph g = readGraph("graphs/2.in");
-	dijkstra(g, 0);
+	Graph g = readGraph("graphs/1.in");
+	//dijkstra(g, 0);
+
+	PQ pq = newPQ();
+	ItemPQ item;
+	item.key = 1;
+	item.value = 9999;
+	addPQ(pq, item);
+	showPQ(pq);
+	item.key = 2;
+	item.value = 9999;
+	addPQ(pq, item);
+	showPQ(pq);
+	item.key = 5;
+	item.value = 9999;
+	addPQ(pq, item);
+	showPQ(pq);
+	item.key = 6;
+	item.value = 9999;
+	addPQ(pq, item);
+	showPQ(pq);
+
+	
 	//graphVis(g, DEFAULT);
+
 
 
 	return 0;

@@ -11,25 +11,38 @@ ShortestPaths init(Graph g, Vertex v);
 ShortestPaths dijkstra(Graph g, Vertex v) {
 
 	ShortestPaths sp = init(g,v);
-	
+
 	PQ pq = newPQ();
-	ItemPQ item;
-	for (int i = 0; i < sp.noNodes; i++) {
+    ItemPQ new;
+    for (int i = 0; i < sp.noNodes; i++) {
+    	if(i!=v){
+    		new.key = i;
+    		new.value = INFINITY;
+    		addPQ(pq,new);
+    	}
+    }
+    new.key = v;
+    new.value = 0;
+    //addPQ(pq,new);
+    showPQ(pq);
+
+	/*for (int i = 0; i < sp.noNodes; i++) {
 		if (i!=v) {
 			sp.dist[i] = INFINITY;
-			item.key = i;
-			item.value = INFINITY;
-			addPQ(pq, item);
+			new.key = i;
+			new.value = INFINITY;
+			addPQ(pq, new);
 		}
 		sp.pred[i] = NULL;
 	}
-	sp.dist[v] = 0;
-	item.key = v;
-	item.value = 0;
-	addPQ(pq, item);
 	//showPQ(pq);
-	int newDist;
-	while (PQEmpty(pq)==0) {
+	sp.dist[v] = 0;
+	new.key = v;
+	new.value = 0;
+	addPQ(pq, new);
+	showPQ(pq);
+	//int newDist;*/
+	/*while (PQEmpty(pq)==0) {
 		item = dequeuePQ(pq);
 		printf("Item dequeded:  ");
 		printf("| key: %d | value: %d |\n",item.key, item.value);
@@ -56,7 +69,7 @@ ShortestPaths dijkstra(Graph g, Vertex v) {
 			verts = verts->next;
 		}
 		showPQ(pq);
-	}
+	}*/
 
 	//for (int i = 0; i < sp.noNodes; i++) {
 	//	printf(" [%d] ",sp.dist[i]);
