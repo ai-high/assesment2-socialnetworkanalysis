@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
-#define INFINITY 9999
+#define INFINITY 99999
 
 ShortestPaths init(Graph g, Vertex v);
 
@@ -75,6 +75,14 @@ ShortestPaths dijkstra(Graph g, Vertex v) {
 		}
 		//showPQ(pq);
 	}
+
+	for (int i = 0; i < sp.noNodes; i++) {
+		if (sp.dist[i] == INFINITY) {
+			sp.dist[i] = 0;
+		}
+
+	}
+
 
 	//for (int i = 0; i < sp.noNodes; i++) {
 	//	printf(" [%d] ",sp.dist[i]);
