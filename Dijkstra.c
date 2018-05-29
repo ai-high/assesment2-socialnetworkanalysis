@@ -4,50 +4,68 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
-#define INFINITY 9999
+#define INFINITY 99999
 
 ShortestPaths init(Graph g, Vertex v);
 
 ShortestPaths dijkstra(Graph g, Vertex v) {
 
 	ShortestPaths sp = init(g,v);
-	
+
 	PQ pq = newPQ();
-	ItemPQ item;
+    ItemPQ new;
 	for (int i = 0; i < sp.noNodes; i++) {
 		if (i!=v) {
 			sp.dist[i] = INFINITY;
-			item.key = i;
-			item.value = INFINITY;
-			addPQ(pq, item);
+			new.key = i;
+			new.value = INFINITY;
+			addPQ(pq, new);
 		}
 		sp.pred[i] = NULL;
 	}
 	sp.dist[v] = 0;
-	item.key = v;
-	item.value = 0;
-	addPQ(pq, item);
+	new.key = v;
+	new.value = 0;
+	addPQ(pq, new);
 	//showPQ(pq);
 	int newDist;
+	ItemPQ item;
 	while (PQEmpty(pq)==0) {
 		item = dequeuePQ(pq);
-		printf("Item dequeded:  ");
-		printf("| key: %d | value: %d |\n",item.key, item.value);
+		//printf("Item dequeded:  ");
+		//printf("| key: %d | value: %d |\n",item.key, item.value);
 		int src = item.key;
 		AdjList verts = outIncident(g, src);
 		//printf("_____________________ %d ____________\n\n", src);
 		while(verts!=NULL){
 			int dest = verts->w;
 			newDist = sp.dist[src] + verts->weight;
-			if (newDist < sp.dist[dest]) {
+			if (newDist <= sp.dist[dest]) {
+
+
+				PredNode *new = malloc(sizeof(PredNode));
+				new->v = src;
+				new->next = NULL;
+				if (newDist == sp.dist[dest] && sp.pred[dest]!=NULL) {
+					PredNode *tmp = sp.pred[dest];
+					while(tmp->next!=NULL){
+						tmp = tmp->next;
+					}
+					tmp->next = new;
+				} else {
+					sp.pred[dest] = new;
+				}
+
 				item.key = dest;
 				item.value = newDist;
 				updatePQ(pq, item);
 				sp.dist[dest] = newDist;
-				PredNode *new = malloc(sizeof(PredNode));
-				new->v = src;
-				new->next = NULL;
-				sp.pred[dest] = new; 
+
+
+
+				//new->next = NULL;
+				//sp.pred[dest] = new; 
+
 			}
 			//for (int i = 0; i < sp.noNodes; i++) {
 			//	printf(" [%d] ",sp.dist[i]);
@@ -55,8 +73,16 @@ ShortestPaths dijkstra(Graph g, Vertex v) {
 			//printf("\n");
 			verts = verts->next;
 		}
-		showPQ(pq);
+		//showPQ(pq);
 	}
+
+	for (int i = 0; i < sp.noNodes; i++) {
+		if (sp.dist[i] == INFINITY) {
+			sp.dist[i] = 0;
+		}
+
+	}
+
 
 	//for (int i = 0; i < sp.noNodes; i++) {
 	//	printf(" [%d] ",sp.dist[i]);
