@@ -57,7 +57,7 @@ Graph readGraph(char* file) {
 	}
 	fclose(f);
 
-	Graph g = newGraph(maxVert);
+	Graph g = newGraph(maxVert+1);
 	i = 0;
 	while(i < lines) {
 		insertEdge(g,nums[i][0],nums[i][1],nums[i][2]);
@@ -93,7 +93,6 @@ int main(int argc, char* argv[]){
 		return EXIT_FAILURE;
 	}
 	Graph g = readGraph(argv[1]);
-	printf("HASN'T BEEN IMPLEMENTED\n");
 	if (argv[2][0] == 'd' && argv[2][1] == '\0') {
   	NodeValues val = degreeCentrality(g);
   	showNodeValues(val);
