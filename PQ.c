@@ -105,7 +105,7 @@ PQ newPQ() {
 		fprintf(stderr, "Error!\n");
 	}
 	// size to malloc memory
-	int initial_size = 16;
+	int initial_size = 85;
 	pq->item = malloc(sizeof(ItemPQ)*(initial_size + 1));
 	pq->size = 0;
 	return pq;
