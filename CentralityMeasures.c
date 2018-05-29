@@ -57,9 +57,9 @@ NodeValues closenessCentrality(Graph g){
 	NodeValues *values = malloc(sizeof(NodeValues));
 	values->noNodes = numVerticies(g);
 	values->values = malloc(sizeof(double)*numVerticies(g));
-	float count;
-	float N = numVerticies(g);
-	float n;
+	double count;
+	double N = numVerticies(g);
+	double n;
 	for (int i = 0; i < N; i++)
 	{
 		count = 0;
@@ -73,8 +73,11 @@ NodeValues closenessCentrality(Graph g){
 					n++;
 			}
 		}
-
-		values->values[i] = ((n)/(N-1))*((n)/count);
+		if (n==0) {
+			values->values[i] = 0;
+		} else {
+			values->values[i] = ((n)/(N-1))*((n)/count);
+		}
 	}
 	return *values;
 }
@@ -93,7 +96,7 @@ void showNodeValues(NodeValues values){
 
 	for (int i = 0; i < values.noNodes; i++)
 	{
-		printf("%d: %f\n",i,values.values[i]);
+		printf("%d: %lf\n",i,values.values[i]);
 	}
 
 }
