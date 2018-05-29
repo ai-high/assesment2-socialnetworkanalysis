@@ -71,30 +71,50 @@ int main(void){
   	showGraph(g);
 	dijkstra(g, 0);*/
 
-	Graph g = readGraph("graphs/1.in");
-	//dijkstra(g, 0);
-
-	PQ pq = newPQ();
-	ItemPQ item;
-	item.key = 1;
-	item.value = 9999;
-	addPQ(pq, item);
-	showPQ(pq);
-	item.key = 2;
-	item.value = 9999;
-	addPQ(pq, item);
-	showPQ(pq);
-	item.key = 5;
-	item.value = 9999;
-	addPQ(pq, item);
-	showPQ(pq);
-	item.key = 6;
-	item.value = 9999;
-	addPQ(pq, item);
-	showPQ(pq);
+	Graph g = readGraph("graphs/3.in");
+	int numerator[numVerticies(g)-1];
+	int divisor[numVerticies(g)-1];
+	for (int i = 0; i < numVerticies(g); i++) {
+		numerator[i] = 0;
+		divisor[i] = 0;
+	}
+	for (int i = 0; i < numVerticies(g); i++) {
+		ShortestPaths paths = dijkstra(g, i);
+		for (int j = 0; j < numVerticies(g); j++)
+		{
+			if (paths.pred[j]!=NULL) {
+				PredNode *tmp = paths.pred[j];
+				PredNode *tmp2 = paths.pred[j];
+				while(tmp!=NULL){
+					if (tmp->v!=i) {
+						numerator[tmp->v]++;
+						while(tmp2!=NULL){
+							divisor[tmp->v]++;
+							tmp2 = tmp2->next;
+						}
+					}
+					tmp = tmp->next;
+				}
+			}
+		}
+	}
 
 	
-	//graphVis(g, DEFAULT);
+	for (int i = 0; i < numVerticies(g); i++) {
+		printf(" [%d] ",numerator[i]);
+	}
+	printf("\n");
+	for (int i = 0; i < numVerticies(g); i++) {
+		printf(" [-] ");
+	}
+	printf("\n");
+	for (int i = 0; i < numVerticies(g); i++) {
+		printf(" [%d] ",divisor[i]);
+	}
+	printf("\n");
+
+
+	
 
 
 

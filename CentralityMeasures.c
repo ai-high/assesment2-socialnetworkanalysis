@@ -83,8 +83,47 @@ NodeValues closenessCentrality(Graph g){
 }
 
 NodeValues betweennessCentrality(Graph g){
-	NodeValues throwAway = {0};
-	return throwAway;
+	NodeValues *values = malloc(sizeof(NodeValues));
+	values->noNodes = numVerticies(g);
+	values->values = malloc(sizeof(double)*numVerticies(g));
+
+	double numerator[numVerticies(g)-1];
+	double divisor[numVerticies(g)-1];
+	for (int i = 0; i < numVerticies(g); i++) {
+		numerator[i] = 0;
+		divisor[i] = 0;
+	}
+
+	for (int i = 0; i < numVerticies(g); i++) {
+		ShortestPaths paths = dijkstra(g, i);
+		for (int j = 0; j < numVerticies(g); j++)
+		{
+			if (paths.pred[j]!=NULL) {
+				PredNode *tmp = paths.pred[j];
+				PredNode *tmp2 = paths.pred[j];
+				while(tmp!=NULL){
+					if (tmp->v!=i) {
+						numerator[tmp->v]++;
+						while(tmp2!=NULL){
+							divisor[tmp->v]++;
+							tmp2 = tmp2->next;
+						}
+					}
+					tmp = tmp->next;
+				}
+			}
+		}
+	}
+
+	for (int i = 0; i < numVerticies(g); i++) {
+		if (divisor[i]!=0){
+			values->values[i] = numerator[i]/divisor[i];
+		} else {
+			values->values[i] = 0;
+		}
+	}
+
+	return *values;
 }
 
 NodeValues betweennessCentralityNormalised(Graph g){
