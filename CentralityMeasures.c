@@ -41,8 +41,16 @@ NodeValues inDegreeCentrality(Graph g){
 	return *values;
 }
 NodeValues degreeCentrality(Graph g) {
-	NodeValues throwAway = {0};
-	return throwAway;
+	NodeValues *values = malloc(sizeof(NodeValues));
+	values->noNodes = numVerticies(g);
+	values->values = malloc(sizeof(double)*numVerticies(g));
+	NodeValues in = inDegreeCentrality(g);
+	NodeValues out = outDegreeCentrality(g);
+	for (int i = 0; i < in.noNodes; i++)
+	{
+		values->values[i] = in.values[i] + out.values[i];
+	}
+	return *values;
 }
 
 NodeValues closenessCentrality(Graph g){
