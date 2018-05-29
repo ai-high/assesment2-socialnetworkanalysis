@@ -82,14 +82,11 @@ int main(int argc, char* argv[]){
 	}
   Graph g = readGraph(argv[1]);
 
-  //int i;
-  //for(i=0; i<numVerticies(g); i++) {
-  //	printf("_____%d_____\n",i);
-  //  /*ShortestPaths paths = */dijkstra(g,i);
-    //displayShortestPathsStruct(paths);
-    //freeShortestPaths(paths);
-  //}
-  int i = 0;
-  printf("_____%d_____\n",i);
-    /*ShortestPaths paths = */dijkstra(g,i);
+  int i;
+  for(i=0; i<numVerticies(g); i++) {
+  	//printf("_____%d_____\n",i);
+    ShortestPaths paths = dijkstra(g,i);
+    displayShortestPathsStruct(paths);
+    freeShortestPaths(paths);
+  }
 }

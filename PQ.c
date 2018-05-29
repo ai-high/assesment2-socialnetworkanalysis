@@ -67,7 +67,6 @@ ItemPQ dequeuePQ(PQ pq) {
 		if (tmp->item.value < lowest) {
 			save = tmp;
 			lowest = tmp->item.value;
-			printf("lowest: %d\n",lowest);
 		}
 		trail = tmp;
 		tmp = tmp->next;

@@ -14,19 +14,7 @@ ShortestPaths dijkstra(Graph g, Vertex v) {
 
 	PQ pq = newPQ();
     ItemPQ new;
-    for (int i = 0; i < sp.noNodes; i++) {
-    	if(i!=v){
-    		new.key = i;
-    		new.value = INFINITY;
-    		addPQ(pq,new);
-    	}
-    }
-    new.key = v;
-    new.value = 0;
-    //addPQ(pq,new);
-    showPQ(pq);
-
-	/*for (int i = 0; i < sp.noNodes; i++) {
+	for (int i = 0; i < sp.noNodes; i++) {
 		if (i!=v) {
 			sp.dist[i] = INFINITY;
 			new.key = i;
@@ -35,32 +23,49 @@ ShortestPaths dijkstra(Graph g, Vertex v) {
 		}
 		sp.pred[i] = NULL;
 	}
-	//showPQ(pq);
 	sp.dist[v] = 0;
 	new.key = v;
 	new.value = 0;
 	addPQ(pq, new);
-	showPQ(pq);
-	//int newDist;*/
-	/*while (PQEmpty(pq)==0) {
+	//showPQ(pq);
+	int newDist;
+	ItemPQ item;
+	while (PQEmpty(pq)==0) {
 		item = dequeuePQ(pq);
-		printf("Item dequeded:  ");
-		printf("| key: %d | value: %d |\n",item.key, item.value);
+		//printf("Item dequeded:  ");
+		//printf("| key: %d | value: %d |\n",item.key, item.value);
 		int src = item.key;
 		AdjList verts = outIncident(g, src);
 		//printf("_____________________ %d ____________\n\n", src);
 		while(verts!=NULL){
 			int dest = verts->w;
 			newDist = sp.dist[src] + verts->weight;
-			if (newDist < sp.dist[dest]) {
+			if (newDist <= sp.dist[dest]) {
+
+
+				PredNode *new = malloc(sizeof(PredNode));
+				new->v = src;
+				new->next = NULL;
+				if (newDist == sp.dist[dest] && sp.pred[dest]!=NULL) {
+					PredNode *tmp = sp.pred[dest];
+					while(tmp->next!=NULL){
+						tmp = tmp->next;
+					}
+					tmp->next = new;
+				} else {
+					sp.pred[dest] = new;
+				}
+
 				item.key = dest;
 				item.value = newDist;
 				updatePQ(pq, item);
 				sp.dist[dest] = newDist;
-				PredNode *new = malloc(sizeof(PredNode));
-				new->v = src;
-				new->next = NULL;
-				sp.pred[dest] = new; 
+
+
+
+				//new->next = NULL;
+				//sp.pred[dest] = new; 
+
 			}
 			//for (int i = 0; i < sp.noNodes; i++) {
 			//	printf(" [%d] ",sp.dist[i]);
@@ -68,8 +73,8 @@ ShortestPaths dijkstra(Graph g, Vertex v) {
 			//printf("\n");
 			verts = verts->next;
 		}
-		showPQ(pq);
-	}*/
+		//showPQ(pq);
+	}
 
 	//for (int i = 0; i < sp.noNodes; i++) {
 	//	printf(" [%d] ",sp.dist[i]);
