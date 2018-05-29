@@ -3,8 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
 
 typedef struct PQRep {
+	int index;
 	int size;
 	ItemPQ *item;
 } PQRep;
@@ -22,7 +24,7 @@ int getParent(int id) {
 }
 
 int PQEmpty(PQ pq) {
-	return (pq->size == 0);
+	return (pq->index == 0);
 }
 
 void swapItems(PQ pq, int id1, int id2) {
@@ -57,8 +59,8 @@ void shiftDown(PQ pq, int id) {
 		left_child = getLeftChild(id);
 		right_child = getRightChild(id);
 		parent = id;
-		if (right_child > pq->size) {
-			if (left_child > pq->size) {
+		if (right_child > pq->index) {
+			if (left_child > pq->index) {
 				break;
 			}
 			swapChild = left_child;
@@ -82,7 +84,7 @@ void shiftDown(PQ pq, int id) {
 }
 
 int getItemID(PQ pq, ItemPQ element) {
-	for (int id = 1; id <= pq->size; id++) {
+	for (int id = 1; id <= pq->index; id++) {
 		if (pq->item[id].key == element.key) {
 			return id;
 		}
@@ -91,7 +93,7 @@ int getItemID(PQ pq, ItemPQ element) {
 }
 
 int checkKey(PQ pq, ItemPQ element) {
-	for (int id = 1; id <= pq->size; id++) {
+	for (int id = 1; id <= pq->index; id++) {
 		if (pq->item[id].key == element.key) {
 			return 0;
 		}
@@ -104,10 +106,11 @@ PQ newPQ() {
 	if ((pq = malloc(sizeof(PQ))) == NULL) {
 		fprintf(stderr, "Error!\n");
 	}
-	// size to malloc memory
-	int initial_size = 85;
+	// index to malloc memory
+	int initial_size = 3;
 	pq->item = malloc(sizeof(ItemPQ)*(initial_size + 1));
-	pq->size = 0;
+	pq->index = 0;
+	pq->size = initial_size;
 	return pq;
 }
 
@@ -117,10 +120,14 @@ void addPQ(PQ pq, ItemPQ element) {
 		// if added item's key already exists
 		updatePQ(pq, element);
 	} else {
-		int id = pq->size + 1;
+		int id = pq->index + 1;
+		if (id == pq->size) {
+			pq->size = 2*pq->size;
+			pq->item = realloc(pq->item, sizeof(ItemPQ)*pq->size);
+		}
 		pq->item[id] = element;
-		pq->size++;
-		if (pq->size > 1) {
+		pq->index++;
+		if (pq->index > 1) {
 			shiftUp(pq, id);
 		}	
 	}
@@ -128,10 +135,10 @@ void addPQ(PQ pq, ItemPQ element) {
 
 ItemPQ dequeuePQ(PQ pq) {
 	ItemPQ returned = pq->item[1];
-	pq->item[1] = pq->item[pq->size];
-	pq->size--;
+	pq->item[1] = pq->item[pq->index];
+	pq->index--;
 	// make sure there is something in the queue when shifting down
-	if (pq->size > 0) {
+	if (pq->index > 0) {
 		shiftDown(pq, 1);
 	}
 	return returned;
@@ -148,7 +155,7 @@ void updatePQ(PQ pq, ItemPQ element) {
 		int left_child = getLeftChild(id);
 		int right_child = getRightChild(id);
 		// if element is at bottom/end
-		if ((left_child > pq->size) && (right_child > pq->size)) {
+		if ((left_child > pq->index) && (right_child > pq->index)) {
 			// then check if element is less than element
 			if (pq->item[id].value < pq->item[parent].value) {
 				// probably don't need above if statement. shiftUp does the check
@@ -166,7 +173,7 @@ void updatePQ(PQ pq, ItemPQ element) {
 }
 
 void  showPQ(PQ pq) {
-    for (int i = 1; i <= pq->size; i++) {
+    for (int i = 1; i <= pq->index; i++) {
         printf("| key: %d | value: %d |\n",pq->item[i].key, pq->item[i].value);
     }
     printf("\n");
