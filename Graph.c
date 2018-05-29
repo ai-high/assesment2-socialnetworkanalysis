@@ -20,14 +20,14 @@ Graph newGraph(int noNodes) {
 	if((g= malloc(sizeof(GraphRep))) == NULL){
 		fprintf(stderr, "Error!!  .... \n");
 	}
-	g->nVert = noNodes+1;
+	g->nVert = noNodes;
 
 	//malloc and init adjList
-	if((g->adjListArray = malloc(sizeof(AdjList)*noNodes)) == NULL){
+	if((g->adjListArray = malloc(sizeof(AdjList)*g->nVert)) == NULL){
 		fprintf(stderr, "Error!!  .... \n");
 	}
 	int i = 0;
-	while(i<noNodes){
+	while(i<g->nVert){
 		g->adjListArray[i] = NULL;
 		i++;
 	}

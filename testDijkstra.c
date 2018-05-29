@@ -42,7 +42,7 @@ Graph readGraph(char* file) {
 	}
 	fclose(f);
 
-	Graph g = newGraph(maxVert);
+	Graph g = newGraph(maxVert+1);
 	i = 0;
 	while(i < lines) {
 		insertEdge(g,nums[i][0],nums[i][1],nums[i][2]);
@@ -81,9 +81,10 @@ int main(int argc, char* argv[]){
 		return EXIT_FAILURE;
 	}
   Graph g = readGraph(argv[1]);
-  //graphVis(g, DEFAULT);
+
   int i;
   for(i=0; i<numVerticies(g); i++) {
+  	//printf("_____%d_____\n",i);
     ShortestPaths paths = dijkstra(g,i);
     displayShortestPathsStruct(paths);
     freeShortestPaths(paths);

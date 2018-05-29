@@ -45,7 +45,7 @@ Graph readGraph(char* file) {
   }
   fclose(f);
 
-  Graph g = newGraph(maxVert);
+  Graph g = newGraph(maxVert+1);
   i = 0;
   while(i < lines) {
     insertEdge(g,nums[i][0],nums[i][1],nums[i][2]);
@@ -76,7 +76,7 @@ int main(){
   insertEdge(g,3, 1, 5);
   showGraph(g);*/
 
-  Graph g = readGraph("graphs/1.in");
+  Graph g = readGraph("graphs/6.in");
 
 	// draws the graph
   graphVis(g, DEFAULT);

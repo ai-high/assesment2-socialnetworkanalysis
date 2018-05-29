@@ -5,64 +5,75 @@
 int main() {
     PQ pq = newPQ();
     ItemPQ new;
-    ItemPQ *change;
-    ItemPQ what;
-
-    what.value = 5;
-    what.key = 2;
-    change = &what;
-    addPQ(pq, what);
-    printf("ADDING: %d\n", what.value);
+    new.key = 0;
+    new.value = 9999;
+    printf("Adding k: %d  v: %d\n",new.key,new.value);
+    addPQ(pq,new);
     showPQ(pq);
 
-    new.value = 1;
-    new.key = 5;
-    addPQ(pq, new);
-    printf("ADDING: %d\n", new.value);
-    showPQ(pq);
-
-    new.value = 3;
     new.key = 1;
-    addPQ(pq, new);
-    printf("ADDING: %d\n", new.value);
+    new.value = 2;
+    printf("Adding k: %d  v: %d\n",new.key,new.value);
+    addPQ(pq,new);
     showPQ(pq);
 
-    new.value = 40;
-    new.key = 5;
-    addPQ(pq, new);
-    printf("REPLACING 1 WITH: %d\n", new.value);
+    new.key = 8;
+    new.value = 5;
+    printf("Adding k: %d  v: %d\n",new.key,new.value);
+    addPQ(pq,new);
     showPQ(pq);
 
-    new.value = 23;
-    new.key = 10;
-    addPQ(pq, new);
-    printf("ADDING: %d\n", new.value);
-    showPQ(pq);
-
-    new.value = 14;
-    new.key = 9;
-    addPQ(pq, new);
-    printf("ADDING: %d\n", new.value);
-    showPQ(pq);
-
+    new.key = 12;
     new.value = 8;
-    new.key = 6;
-    addPQ(pq, new);
-    printf("ADDING: %d\n", new.value);
+    printf("Adding k: %d  v: %d\n",new.key,new.value);
+    addPQ(pq,new);
     showPQ(pq);
 
-    printf("CHANGE 5 TO 100\n");
-    change->value = 100;
-    updatePQ(pq, *change);
+    new.key = 2;
+    new.value = 9999;
+    printf("Adding k: %d  v: %d\n",new.key,new.value);
+    addPQ(pq,new);
     showPQ(pq);
 
-    ItemPQ remove;
-    remove = dequeuePQ(pq);
-    printf("REMOVING %d\n", remove.value);
+    new.key = 3;
+    new.value = 9999;
+    printf("Adding k: %d  v: %d\n",new.key,new.value);
+    addPQ(pq,new);
     showPQ(pq);
 
-    remove = dequeuePQ(pq);
-    printf("REMOVING %d\n", remove.value);
+    new.key = 3;
+    new.value = 10;
+    printf("Adding k: %d  v: %d\n",new.key,new.value);
+    addPQ(pq,new);
     showPQ(pq);
+
+    new.key = 1;
+    new.value = 69;
+    printf("updating k: %d with v: %d\n",new.key,new.value);
+    updatePQ(pq,new);
+    showPQ(pq);
+
+    ItemPQ removed;
+    removed = dequeuePQ(pq);
+    printf("Dequeued: k:%d v:%d\n",removed.key,removed.value);
+    showPQ(pq);
+
+    removed = dequeuePQ(pq);
+    printf("Dequeued: k:%d v:%d\n",removed.key,removed.value);
+    showPQ(pq);
+
+    removed = dequeuePQ(pq);
+    printf("Dequeued: k:%d v:%d\n",removed.key,removed.value);
+    showPQ(pq);
+
+    removed = dequeuePQ(pq);
+    printf("Dequeued: k:%d v:%d\n",removed.key,removed.value);
+    showPQ(pq);
+
+    removed = dequeuePQ(pq);
+    printf("Dequeued: k:%d v:%d\n",removed.key,removed.value);
+    showPQ(pq);
+
+
     return 0;
 }
