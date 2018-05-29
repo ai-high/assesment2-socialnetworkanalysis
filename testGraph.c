@@ -76,7 +76,7 @@ int main(){
   insertEdge(g,3, 1, 5);
   showGraph(g);*/
 
-  Graph g = readGraph("graphs/6.in");
+  Graph g = readGraph("graphs/4.in");
 
 	// draws the graph
   graphVis(g, DEFAULT);
