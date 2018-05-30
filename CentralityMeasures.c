@@ -88,42 +88,38 @@ NodeValues betweennessCentrality(Graph g){
 	values->values = malloc(sizeof(double)*numVerticies(g));
 
 	double numerator[numVerticies(g)-1];
-	double divisor[numVerticies(g)-1];
 	for (int i = 0; i < numVerticies(g); i++) {
 		numerator[i] = 0;
-		divisor[i] = 0;
 	}
-
 	double count;
 	for (int i = 0; i < numVerticies(g); i++) {
 		ShortestPaths paths = dijkstra(g, i);
 		for (int j = 0; j < numVerticies(g); j++)
 		{
-			count = 0;
-			if (paths.pred[j]!=NULL) {
-				PredNode *tmp = paths.pred[j];
-				while(tmp!=NULL){
-					count++;
-					int x = tmp->v;
-					while(x!=i){
-						numerator[x]++;
-						divisor[x] = divisor[x] + count;
-						x = paths.pred[x]->v;
+			if (i!=j) {
+				count = 0;
+				if (paths.pred[j]!=NULL) {
+					PredNode *tmp = paths.pred[j];
+					while(tmp!=NULL){
+						count++;
+						int x = tmp->v;
+						while(x!=i){
+							numerator[x]++;
+							x = paths.pred[x]->v;
+						}
+						tmp = tmp->next;
+						if(tmp==NULL)
+							for (int i = 0; i < numVerticies(g); i++) {
+								values->values[i] = values->values[i] + numerator[i]/count;
+								numerator[i] = 0;
+							}	
 					}
-
-					tmp = tmp->next;
 				}
 			}
 		}
+
 	}
 
-	for (int i = 0; i < numVerticies(g); i++) {
-		if (divisor[i]!=0){
-			values->values[i] = numerator[i]/divisor[i];
-		} else {
-			values->values[i] = 0;
-		}
-	}
 
 	return *values;
 }

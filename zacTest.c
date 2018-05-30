@@ -71,50 +71,54 @@ int main(void){
   	showGraph(g);
 	dijkstra(g, 0);*/
 
-	Graph g = readGraph("graphs/2.in");
+	Graph g = readGraph("graphs/4.in");
 	double numerator[numVerticies(g)-1];
-	double divisor[numVerticies(g)-1];
+	double values[numVerticies(g)-1];
 	for (int i = 0; i < numVerticies(g); i++) {
 		numerator[i] = 0;
-		divisor[i] = 0;
+		values[i] = 0;
 	}
 	double count;
 	for (int i = 0; i < numVerticies(g); i++) {
 		ShortestPaths paths = dijkstra(g, i);
 		for (int j = 0; j < numVerticies(g); j++)
 		{
-			printf("INDEX: %d\n",j);
-			count = 0;
-			if (paths.pred[j]!=NULL) {
-				PredNode *tmp = paths.pred[j];
-				while(tmp!=NULL){
-					count++;
-					printf("**%lf**",count);
-					//printf("[%d",j);
-					int x = tmp->v;
-					while(x!=i){
-						printf(" %d ",x);
-						numerator[x]++;
-						divisor[x] = divisor[x] + count;
-						x = paths.pred[x]->v;
+			if (i!=j) {
+				printf("%d - %d     ",i,j);
+				count = 0;
+				if (paths.pred[j]!=NULL) {
+					PredNode *tmp = paths.pred[j];
+					while(tmp!=NULL){
+						count++;
+						printf(" [");
+						int x = tmp->v;
+						while(x!=i){
+							printf(" %d ",x);
+							numerator[x]++;
+							x = paths.pred[x]->v;
+						}
+						printf("]   ");
+						tmp = tmp->next;
+						if(tmp==NULL)
+							printf("  %0.1f  ",count);
+							for (int i = 0; i < numVerticies(g); i++) {
+								//printf("  %lf / %lf\n",numerator[i],count);
+								values[i] = values[i] + numerator[i]/count;
+								numerator[i] = 0;
+							}	
 					}
-					//printf("->%d]\n",i);
-					printf("\n");
-					tmp = tmp->next;
 				}
+				printf("\n");
 			}
 		}
-		printf("\n");
+
 	}
 
 	for (int i = 0; i < numVerticies(g); i++) {
-		printf(" [%lf] ",numerator[i]);
+		printf(" [%lf] ",values[i]);
 	}
 	printf("\n");
-	for (int i = 0; i < numVerticies(g); i++) {
-		printf(" [%lf] ",divisor[i]);
-	}
-	printf("\n");
+
 
 
 
