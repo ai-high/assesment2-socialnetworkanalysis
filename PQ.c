@@ -3,125 +3,183 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
 
-typedef struct PQNode *Node;
-Node newNode(ItemPQ element);
-void reorder(PQ pq,Node n);
+typedef struct PQRep {
+	int index;
+	int size;
+	ItemPQ *item;
+} PQRep;
 
-struct PQNode {
-	ItemPQ item;
-	Node next;
-};
+int getRightChild(int id) {
+	return 2*id + 1;
+}
 
-struct PQRep {
-	Node first;
-};
+int getLeftChild(int id) {
+	return 2*id;
+}
 
+int getParent(int id) {
+	return id/2;
+}
+
+int PQEmpty(PQ pq) {
+	return (pq->index == 0);
+}
+
+void swapItems(PQ pq, int id1, int id2) {
+	ItemPQ tmp = pq->item[id1];
+	pq->item[id1] = pq->item[id2];
+	pq->item[id2] = tmp; 
+}
+
+void shiftUp(PQ pq, int id) {
+	while (id != 1) {
+		int parent = getParent(id);
+		// if child is greater than the parent, do nothing
+		if (pq->item[id].value > pq->item[parent].value) {
+			break;
+		} else {
+			// swap parent and child item
+			swapItems(pq, id, parent);
+		}
+		id = parent;
+	}
+}
+
+// not yet
+void shiftDown(PQ pq, int id) {
+	int left_child;
+	int right_child;
+	int parent;
+	int swapChild;
+	int breakLoop = 0;
+	while(true) {
+		// printf("whatasdasd??\n");
+		left_child = getLeftChild(id);
+		right_child = getRightChild(id);
+		parent = id;
+		if (right_child > pq->index) {
+			if (left_child > pq->index) {
+				break;
+			}
+			swapChild = left_child;
+			breakLoop = 1;
+		} else if (pq->item[left_child].value < pq->item[right_child].value) {  // check which child is smallest
+			swapChild = left_child; 
+		} else {
+			swapChild = right_child;
+		}
+		// if child is smaller than parent
+		if (pq->item[parent].value > pq->item[swapChild].value) {
+			swapItems(pq, parent, swapChild);
+			id = swapChild;
+		} else {
+			break;
+		}
+		if (breakLoop == 1) {
+			break;
+		}
+	}
+}
+
+int getItemID(PQ pq, ItemPQ element) {
+	for (int id = 1; id <= pq->index; id++) {
+		if (pq->item[id].key == element.key) {
+			return id;
+		}
+	}
+	return -1;
+}
+
+int checkKey(PQ pq, ItemPQ element) {
+	for (int id = 1; id <= pq->index; id++) {
+		if (pq->item[id].key == element.key) {
+			return 0;
+		}
+	}
+	return 1;
+}
 
 PQ newPQ() {
-	PQ pq = malloc(sizeof(PQ));
-	pq->first = NULL;
+	PQ pq;
+	if ((pq = malloc(sizeof(PQ))) == NULL) {
+		fprintf(stderr, "Error!\n");
+	}
+	// index to malloc memory
+	int initial_size = 3;
+	pq->item = malloc(sizeof(ItemPQ)*(initial_size + 1));
+	pq->index = 0;
+	pq->size = initial_size;
 	return pq;
 }
 
-int PQEmpty(PQ p) {
-	if(p->first==NULL) {
-		return 1;
-	}
-	return 0;
-}
-
 void addPQ(PQ pq, ItemPQ element) {
-
-	Node tmp = pq->first;
-	while(tmp!=NULL) {
-		if (tmp->item.key == element.key) {
-			updatePQ(pq, element);
-			return;
-		}
-		tmp = tmp->next;
-	}
-
-	if(pq->first==NULL) {
-		Node new = newNode(element);
-		pq->first = new;
+	int check = checkKey(pq, element);
+	if (check == 0) {
+		// if added item's key already exists
+		updatePQ(pq, element);
 	} else {
-		Node new = newNode(element);
-		Node tmp = pq->first;
-		new->next = tmp;
-		pq->first = new;
+		int id = pq->index + 1;
+		if (id == pq->size) {
+			pq->size = 2*pq->size;
+			pq->item = realloc(pq->item, sizeof(ItemPQ)*pq->size);
+		}
+		pq->item[id] = element;
+		pq->index++;
+		if (pq->index > 1) {
+			shiftUp(pq, id);
+		}	
 	}
 }
 
 ItemPQ dequeuePQ(PQ pq) {
-	if (pq->first == NULL) {
-		printf("TRIED TO DEQUEUE EMPTY LIST IDIOT\n");
-		exit(1);
+	ItemPQ returned = pq->item[1];
+	pq->item[1] = pq->item[pq->index];
+	pq->index--;
+	// make sure there is something in the queue when shifting down
+	if (pq->index > 0) {
+		shiftDown(pq, 1);
 	}
-	Node tmp = pq->first;
-	Node trail = NULL;
-	int lowest = pq->first->item.value;
-	Node save = pq->first;
-	ItemPQ dequeued;
-	while (tmp!=NULL) {
-		if (tmp->item.value < lowest) {
-			save = tmp;
-			lowest = tmp->item.value;
-		}
-		trail = tmp;
-		tmp = tmp->next;
-	}
-	dequeued = save->item;
-	trail = NULL;
-	tmp = pq->first;
-	while (tmp!=save) {
-		trail = tmp;
-		tmp = tmp->next;
-	}
-
-	if (trail == NULL) {
-		tmp = pq->first;
-		pq->first = pq->first->next;
-		free(tmp);
-	} else {
-		trail->next = tmp->next;
-		free(tmp);
-	}
-	return dequeued;
+	return returned;
 }
 
 void updatePQ(PQ pq, ItemPQ element) {
-
-	Node tmp = pq->first;
-	while (tmp!=NULL) {
-		if (tmp->item.key == element.key) {
-			tmp->item.value = element.value;
-			return;
+	int id = getItemID(pq, element);
+	if (id == -1) {
+		printf("ITEM IS NOT INSIDE QUEUE\n");
+		exit(1);
+	} else {
+		pq->item[id].value = element.value;
+		int parent = getParent(id);
+		int left_child = getLeftChild(id);
+		int right_child = getRightChild(id);
+		// if element is at bottom/end
+		if ((left_child > pq->index) && (right_child > pq->index)) {
+			// then check if element is less than element
+			if (pq->item[id].value < pq->item[parent].value) {
+				// probably don't need above if statement. shiftUp does the check
+				shiftUp(pq, id);
+			}
+		// if element is the first one
+		} else if (id == 1) {
+			shiftDown(pq, id);
+		} else if (pq->item[id].value > pq->item[parent].value) {		// check if element is greater than parent
+			shiftDown(pq, id);
+		} else {						// else if element is smaller than children
+			shiftUp(pq, id);
 		}
-		tmp = tmp->next;
 	}
-
 }
 
 void  showPQ(PQ pq) {
-	Node tmp = pq->first;
-	printf("--------------------------\n");
-	while (tmp!=NULL) {
-		printf("| key: %d | value: %d |\n",tmp->item.key, tmp->item.value);
-		tmp = tmp->next;
-	}
-	printf("--------------------------\n");
+    for (int i = 1; i <= pq->index; i++) {
+        printf("| key: %d | value: %d |\n",pq->item[i].key, pq->item[i].value);
+    }
+    printf("\n");
 }
 
 void  freePQ(PQ pq) {
-
+	free(pq->item);
+	free(pq);
 }
-
-Node newNode(ItemPQ element) {
-	Node new = malloc (sizeof(Node));
-	new->item.key = element.key;
-	new->item.value = element.value;
-	new->next = NULL;
-	return new;
-}
-
