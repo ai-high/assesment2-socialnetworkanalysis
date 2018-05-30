@@ -139,10 +139,14 @@ void removeClusters(int x, int y, DendrogramRep dRep) {
 	Dendrogram tmp;
 	for (int i = 0; i < dRep->size; i++) {
 		if (i == vertex) {
+			// printf("x = %d\n", x);
+			// printf("value = %d\n", dRep->dendA[x]->vertex);
+			// printf("dendA[y]->vertex = %d\n", dRep->dendA[y]->vertex);
+			Dendrogram insertRight = newDendrogram(dRep->dendA[y]->vertex, dRep->dendA[y]->left, dRep->dendA[y]->right);
+			Dendrogram insertLeft = newDendrogram(dRep->dendA[x]->vertex, dRep->dendA[x]->left, dRep->dendA[x]->right);
 			tmp = dRep->dendA[i]; 
 			free(tmp);
-			Dendrogram insertRight = newDendrogram(dRep->dendA[y]->vertex, dRep->dendA[y]->left, dRep->dendA[y]->right);
-			dRep->dendA[i] = newDendrogram(vertex, dRep->dendA[x], insertRight);
+			dRep->dendA[i] = newDendrogram(vertex, insertLeft, insertRight);
 		}
 	}
 	for (int i = 0; i < dRep->size; i++) {
@@ -192,7 +196,9 @@ void singleLinkage(float **distanceArr, int x, int y, int size) {
 	for (int i = 0; i < size; i++) {
 		float x_value = distanceArr[x][i];
 		float y_value = distanceArr[y][i];
-		if (x_value == -1) {
+		if ((i == x) || (i == y)) {
+			continue;
+		} else if (x_value == -1) {
 			distanceArr[x][i] = distanceArr[y][i];
 		} else if (y_value == -1) {
 			distanceArr[y][i] = distanceArr[x][i];
@@ -236,7 +242,9 @@ void completeLinkage(float **distanceArr, int x, int y, int size) {
 	for (int i = 0; i < size; i++) {
 		float x_value = distanceArr[x][i];
 		float y_value = distanceArr[y][i];
-		if (x_value == INFINITY) {
+		if ((i == x) || (i == y)) {
+			continue;
+		} else if (x_value == INFINITY) {
 			distanceArr[x][i] = distanceArr[y][i];
 		} else if (y_value == INFINITY) {
 			distanceArr[y][i] = distanceArr[x][i];
@@ -278,15 +286,15 @@ Dendrogram LanceWilliamsHAC(Graph g, int method) {
 		}
 	}
 
-	// code to test if initDistance() works //
-	for (int i = 0; i < g->nVert; i++) {
-		for (int j = 0; j < g->nVert; j++) {
-			printf("[%d][%d] = %.4f ", i, j, distanceArr[i][j]);
-		}
-		printf("\n");
-	}
-	printf("\n");
-	// -------------it works------------- //
+	// // code to test if initDistance() works //
+	// for (int i = 0; i < g->nVert; i++) {
+	// 	for (int j = 0; j < g->nVert; j++) {
+	// 		printf("[%d][%d] = %.4f ", i, j, distanceArr[i][j]);
+	// 	}
+	// 	printf("\n");
+	// }
+	// printf("\n");
+	// // -------------it works------------- //
 
 	// make a struct that will hold the dendrograms --- index is equal to vertex
 	DendrogramRep dRep = newDendrogramRep(g->nVert);
@@ -307,6 +315,7 @@ Dendrogram LanceWilliamsHAC(Graph g, int method) {
 	// printf("for dendA[4], left value is %d and right value is %d\n", dRep->dendA[4]->left->vertex, dRep->dendA[4]->right->vertex);
 
 	// FOR LOOP TO FIND CLOSET CLUSTER AND UPDATE DENDROGRAM
+	// for (int k = 1; k < g->nVert; k++) {
 	for (int k = 1; k < g->nVert; k++) {
 		Coordinates coord = newCoordinates();
 		// do a check if coord doesn't find anything!!!!!!
@@ -316,8 +325,6 @@ Dendrogram LanceWilliamsHAC(Graph g, int method) {
 		printf("i = %d, j = %d\n", coord->x, coord->y);
 		// remove both clusters and merge them, then add it to the index of whichever was smaller
 		removeClusters(coord->x, coord->y, dRep);
-		// printf("for dendA[2], left value is %d and right value is %d\n", dRep->dendA[2]->left->vertex, dRep->dendA[2]->right->vertex);
-		// printf("removed cluster's vertex is now %d\n", dRep->dendA[4]->vertex);
 		// resize array to n-1
 		dRep->size--;
 		// update distanceArr using Lance-Williams method
@@ -326,13 +333,14 @@ Dendrogram LanceWilliamsHAC(Graph g, int method) {
 		} else {
 			completeLinkage(distanceArr, coord->x, coord->y, g->nVert);
 		}
-		for (int i = 0; i < g->nVert; i++) {
-			for (int j = 0; j < g->nVert; j++) {
-				printf("[%d][%d] = %.4f ", i, j, distanceArr[i][j]);
-			}
-			printf("\n");
-		}
-		printf("\n");
+
+		// for (int i = 0; i < g->nVert; i++) {
+		// 	for (int j = 0; j < g->nVert; j++) {
+		// 		printf("[%d][%d] = %.4f ", i, j, distanceArr[i][j]);
+		// 	}
+		// 	printf("\n");
+		// }
+		// printf("\n");
 	}
 
 	return dRep->dendA[0];

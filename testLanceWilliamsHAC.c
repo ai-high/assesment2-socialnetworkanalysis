@@ -57,6 +57,27 @@ Graph readGraph(char* file) {
   return g;
 }
 
+void padding ( char ch, int n ){
+  int i;
+  
+  for ( i = 0; i < n; i++ )
+    putchar ( ch );
+}
+
+void structure ( Dendrogram root, int level ){
+  int i;
+  
+  if ( root == NULL ) {
+    padding ( '\t', level );
+    puts ( "~" );
+  } else {
+    structure ( root->right, level + 1 );
+    padding ( '\t', level );
+    printf ( "%d\n", root->vertex );
+    structure ( root->left, level + 1 );
+  }
+}
+
 int main(void) {
 	// Graph g = newGraph(6);
 	// insertEdge(g,1, 2, 1);
@@ -73,6 +94,9 @@ int main(void) {
 	Graph g = readGraph("graphs/2.in");
 	// showGraph(g);
 	Dendrogram d = LanceWilliamsHAC(g, 1);
+
+  // printing function taken from https://gist.github.com/obstschale/2971468
+  structure(d, 0);
 
 	return 0;
 }
