@@ -108,11 +108,12 @@ NodeValues betweennessCentrality(Graph g){
 							x = paths.pred[x]->v;
 						}
 						tmp = tmp->next;
-						if(tmp==NULL)
+						if(tmp==NULL) {
 							for (int i = 0; i < numVerticies(g); i++) {
 								values->values[i] = values->values[i] + numerator[i]/count;
 								numerator[i] = 0;
-							}	
+							}
+						}	
 					}
 				}
 			}

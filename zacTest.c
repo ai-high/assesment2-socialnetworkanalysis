@@ -71,7 +71,7 @@ int main(void){
   	showGraph(g);
 	dijkstra(g, 0);*/
 
-	Graph g = readGraph("graphs/4.in");
+	Graph g = readGraph("graphs/6.in");
 	double numerator[numVerticies(g)-1];
 	double values[numVerticies(g)-1];
 	for (int i = 0; i < numVerticies(g); i++) {
@@ -90,22 +90,29 @@ int main(void){
 					PredNode *tmp = paths.pred[j];
 					while(tmp!=NULL){
 						count++;
-						printf(" [");
-						int x = tmp->v;
-						while(x!=i){
-							printf(" %d ",x);
-							numerator[x]++;
-							x = paths.pred[x]->v;
+						if (tmp->next!=NULL || count>1) {
+							printf(" [");
+							int x = tmp->v;
+							while(x!=i){
+								printf(" %d ",x);
+								numerator[x]++;
+								x = paths.pred[x]->v;
+							}
+							printf("]   ");
+							tmp = tmp->next;
+							if(tmp==NULL) {
+								printf("  %0.1f  ",count);
+								for (int i = 0; i < numVerticies(g); i++) {
+									if (numerator[i]!=0) {
+										printf("\n[%d]:  %lf / %lf\n",i,numerator[i],count);
+									}
+									values[i] = values[i] + numerator[i]/count;
+									numerator[i] = 0;
+								}
+							}
+						} else {
+							tmp = tmp->next;
 						}
-						printf("]   ");
-						tmp = tmp->next;
-						if(tmp==NULL)
-							printf("  %0.1f  ",count);
-							for (int i = 0; i < numVerticies(g); i++) {
-								//printf("  %lf / %lf\n",numerator[i],count);
-								values[i] = values[i] + numerator[i]/count;
-								numerator[i] = 0;
-							}	
 					}
 				}
 				printf("\n");
