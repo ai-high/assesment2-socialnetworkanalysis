@@ -91,10 +91,11 @@ int main(void) {
 	// insertEdge(g,0, 4, 2);
 	// insertEdge(g,3, 4, 1);
 	// insertEdge(g,3, 1, 5);
-	Graph g = readGraph("graphs/2.in");
+	Graph g = readGraph("graphs/4.in");
 	// showGraph(g);
+  // printf("yes\n");
 	Dendrogram d = LanceWilliamsHAC(g, 1);
-
+  
   // printing function taken from https://gist.github.com/obstschale/2971468
   structure(d, 0);
 

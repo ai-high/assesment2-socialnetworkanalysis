@@ -128,34 +128,21 @@ Coordinates findClosestClusters(Coordinates coord, float **distanceArr, int size
 }
 
 void removeClusters(int x, int y, DendrogramRep dRep) {
-	int vertex, remove;
+	int keep, remove;
 	if (x < y) {
-		vertex = x;
+		keep = x;
 		remove = y;
 	} else {
-		vertex = y;
+		keep = y;
 		remove = x;
 	}
-	Dendrogram tmp;
-	for (int i = 0; i < dRep->size; i++) {
-		if (i == vertex) {
-			// printf("x = %d\n", x);
-			// printf("value = %d\n", dRep->dendA[x]->vertex);
-			// printf("dendA[y]->vertex = %d\n", dRep->dendA[y]->vertex);
-			Dendrogram insertRight = newDendrogram(dRep->dendA[y]->vertex, dRep->dendA[y]->left, dRep->dendA[y]->right);
-			Dendrogram insertLeft = newDendrogram(dRep->dendA[x]->vertex, dRep->dendA[x]->left, dRep->dendA[x]->right);
-			tmp = dRep->dendA[i]; 
-			free(tmp);
-			dRep->dendA[i] = newDendrogram(vertex, insertLeft, insertRight);
-		}
-	}
-	for (int i = 0; i < dRep->size; i++) {
-		if (i == remove) {
-			tmp = dRep->dendA[i]; 
-			free(tmp);
-			dRep->dendA[i] = newDendrogram(-1, NULL, NULL);
-		}
-	}
+	// printf("keep = %d\n", keep);
+	
+	Dendrogram new = newDendrogram(keep, dRep->dendA[keep], dRep->dendA[remove]);
+	dRep->dendA[keep] = new;
+
+	Dendrogram removed = newDendrogram(-1, NULL, NULL);
+	dRep->dendA[remove] = removed;
 }
 
 void restructureDistanceArr(float **distanceArr, int change, int size) {
@@ -304,7 +291,10 @@ Dendrogram LanceWilliamsHAC(Graph g, int method) {
 		dRep->dendA[placeholder] = d;
 	}
 	// printf("dRep->dendA[0]->vertex = %d\n", dRep->dendA[0]->vertex);
-	// printf("for dendA[0], left value is %d and right value is %d\n", dRep->dendA[0]->left->vertex, dRep->dendA[0]->right->vertex);
+	// if (dRep->dendA[0]->left == NULL) {
+	// 	printf("kekekeke\n");
+	// }
+	// printf("for dendA[0], left value is %d and right value is %d\n", dRep->dendA[0]->left, dRep->dendA[0]->right);
 	// printf("dRep->dendA[1]->vertex = %d\n", dRep->dendA[1]->vertex);
 	// printf("for dendA[1], left value is %d and right value is %d\n", dRep->dendA[1]->left->vertex, dRep->dendA[1]->right->vertex);
 	// printf("dRep->dendA[2]->vertex = %d\n", dRep->dendA[2]->vertex);
@@ -315,18 +305,23 @@ Dendrogram LanceWilliamsHAC(Graph g, int method) {
 	// printf("for dendA[4], left value is %d and right value is %d\n", dRep->dendA[4]->left->vertex, dRep->dendA[4]->right->vertex);
 
 	// FOR LOOP TO FIND CLOSET CLUSTER AND UPDATE DENDROGRAM
-	// for (int k = 1; k < g->nVert; k++) {
+	printf("nVert = %d\n", g->nVert);
 	for (int k = 1; k < g->nVert; k++) {
+	// for (int k = 1; k < 2; k++) {
+		printf("k = %d\n", k);
 		Coordinates coord = newCoordinates();
 		// do a check if coord doesn't find anything!!!!!!
 
 		// find both clusters
 		coord = findClosestClusters(coord, distanceArr, g->nVert);
 		printf("i = %d, j = %d\n", coord->x, coord->y);
+		if ((coord->x == -1) && (coord->y == -1)) {
+			exit(1);
+		}
 		// remove both clusters and merge them, then add it to the index of whichever was smaller
 		removeClusters(coord->x, coord->y, dRep);
 		// resize array to n-1
-		dRep->size--;
+		// dRep->size--;
 		// update distanceArr using Lance-Williams method
 		if (method == 1) {
 			singleLinkage(distanceArr, coord->x, coord->y, g->nVert);
@@ -342,10 +337,9 @@ Dendrogram LanceWilliamsHAC(Graph g, int method) {
 		// }
 		// printf("\n");
 	}
-
 	return dRep->dendA[0];
 }
 
 void freeDendrogram(Dendrogram d) {
-
+	free(d);
 }
