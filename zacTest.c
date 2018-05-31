@@ -90,7 +90,6 @@ int main(void){
 					PredNode *tmp = paths.pred[j];
 					while(tmp!=NULL){
 						count++;
-						if (tmp->next!=NULL || count>1) {
 							printf(" [");
 							int x = tmp->v;
 							while(x!=i){
@@ -105,14 +104,12 @@ int main(void){
 								for (int i = 0; i < numVerticies(g); i++) {
 									if (numerator[i]!=0) {
 										printf("\n[%d]:  %lf / %lf\n",i,numerator[i],count);
+										values[i] = values[i] + numerator[i]/count;
 									}
-									values[i] = values[i] + numerator[i]/count;
+									//values[i] = values[i] + numerator[i]/count;
 									numerator[i] = 0;
 								}
 							}
-						} else {
-							tmp = tmp->next;
-						}
 					}
 				}
 				printf("\n");

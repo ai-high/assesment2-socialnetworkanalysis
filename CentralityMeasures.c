@@ -110,7 +110,9 @@ NodeValues betweennessCentrality(Graph g){
 						tmp = tmp->next;
 						if(tmp==NULL) {
 							for (int i = 0; i < numVerticies(g); i++) {
-								values->values[i] = values->values[i] + numerator[i]/count;
+								if (numerator[i]!=0 && count!=0) {
+									values->values[i] = values->values[i] + numerator[i]/count;
+								}
 								numerator[i] = 0;
 							}
 						}	
@@ -126,8 +128,15 @@ NodeValues betweennessCentrality(Graph g){
 }
 
 NodeValues betweennessCentralityNormalised(Graph g){
-	NodeValues throwAway = {0};
-	return throwAway;
+	NodeValues values = betweennessCentrality( g);
+	double n = numVerticies(g);
+	for (int i = 0; i < numVerticies(g); i++) {
+
+		values.values[i] = values.values[i]*(1/((n-1)*(n-2)));
+
+
+	}
+	return values;
 }
 
 void showNodeValues(NodeValues values){
