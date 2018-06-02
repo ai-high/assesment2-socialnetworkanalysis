@@ -9,6 +9,7 @@
 typedef struct DendRep *DendrogramRep;
 typedef struct Coords *Coordinates;
 
+// struct that stores coordinates for the closest clusters
 typedef struct Coords {
 	int x, y;
 } Coords;
@@ -18,11 +19,13 @@ typedef struct GraphRep {
 	AdjList *adjListArray;
 } GraphRep;
 
+// struct that holds all current dendrograms in an array
 typedef struct DendRep {
 	int size;
 	Dendrogram *dendA;
 } DendRep;
 
+// initialise coord struct
 Coordinates newCoordinates() {
 	Coordinates coord;
 	if ((coord = malloc(sizeof(Coords))) == NULL) {
@@ -33,6 +36,7 @@ Coordinates newCoordinates() {
 	return coord;
 }
 
+// initialise DendrogramRep struct
 DendrogramRep newDendrogramRep(int nVert) {
 	DendrogramRep dRep;
 	if ((dRep = malloc(sizeof(DendRep))) == NULL) {
@@ -44,6 +48,8 @@ DendrogramRep newDendrogramRep(int nVert) {
 	return dRep;
 }
 
+// Creating a dendrogram, given a vertex and it's two children, if any
+// left and right = NULL if there are no children
 Dendrogram newDendrogram(int vertex, Dendrogram left, Dendrogram right) {
 	Dendrogram d;
 	if ((d = malloc(sizeof(DNode))) == NULL) {
@@ -84,7 +90,7 @@ AdjList findEdge(Graph g, Vertex src, Vertex dest) {
 	return NULL;
 }
 
-// calculates initial distance array
+// calculates initial distances between vertices and stores into 2D array
 void initDistance(Graph g, float **dist, int src, int dest) {
 	float weight1 = 0;
 	float weight2 = 0;
@@ -109,6 +115,7 @@ void initDistance(Graph g, float **dist, int src, int dest) {
 	}
 }
 
+// calculates the closest clusters from the distance array and returns coordinates to where it is in the array
 Coordinates findClosestClusters(Coordinates coord, float **distanceArr, int size) {
 	float smallest = INFINITY;
 	int arr_size = size;
@@ -127,6 +134,8 @@ Coordinates findClosestClusters(Coordinates coord, float **distanceArr, int size
 	return coord;
 }
 
+// remove two clusters from the dRep array and merge them together
+// then add that merged cluster to the index of the smallest of x and y
 void removeClusters(int x, int y, DendrogramRep dRep) {
 	int keep, remove;
 	if (x < y) {
@@ -145,6 +154,8 @@ void removeClusters(int x, int y, DendrogramRep dRep) {
 	dRep->dendA[remove] = removed;
 }
 
+// if clusters have been removed, change all values of the cluster with greatest index to -1
+// makes sure that a cluster that has been removed isn't involed when calculating future closest distances
 void restructureDistanceArr(float **distanceArr, int change, int size) {
 	// for row
 	for (int i = 0; i < size; i++) {
@@ -160,6 +171,7 @@ void restructureDistanceArr(float **distanceArr, int change, int size) {
 	}
 }
 
+// calculates distances using single linkage method and updates the distance array
 void singleLinkage(float **distanceArr, int x, int y, int size) {
 	float smallest;
 	// for rows
@@ -206,6 +218,7 @@ void singleLinkage(float **distanceArr, int x, int y, int size) {
 	restructureDistanceArr(distanceArr, change, size);
 }
 
+// calculates the distances using the complete linkage method and updates the distance array
 void completeLinkage(float **distanceArr, int x, int y, int size) {
 	float largest;
 	// for rows
@@ -252,19 +265,18 @@ void completeLinkage(float **distanceArr, int x, int y, int size) {
 	restructureDistanceArr(distanceArr, change, size);
 }
 
-// method = 1 represents "single linkage" and method = 2 represents "complete linkage"
+/*Calculate distances between each pair of vertices
+	Create clusters for every vertex i, c[i]
+	Let Dist(c[i], c[j]) represent the distance between cluster c[i] and c[j], initially it will represent the distance between i and j
+	for k=1 to n-1:
+		find two closest clusters, eg. c[i] and c[j]. If there are multiple alternatives, you can select any one of the pairs
+		remove clusters c[i], c[j] from the collection and add a new cluster c[i+j] (with all vertices c[i] and c[j]) to the collection of clusters
+		update dendrogram
+		update distances, say Dist(c[i+j], c[k]), between the newly added cluster c[i+j] and the rest of the clusters c[k] into the collection using Lance-Williams formula
+	end for
+	return dendrogram
+method = 1 represents "single linkage" and method = 2 represents "complete linkage" */
 Dendrogram LanceWilliamsHAC(Graph g, int method) {
-	/*Calculate distances between each pair of vertices
-	  Create clusters for every vertex i, c[i]
-	  Let Dist(c[i], c[j]) represent the distance between cluster c[i] and c[j], initially it will represent the distance between i and j
-	  for k=1 to n-1:
-	  	find two closest clusters, eg. c[i] and c[j]. If there are multiple alternatives, you can select any one of the pairs
-	  	remove clusters c[i], c[j] from the collection and add a new cluster c[i+j] (with all vertices c[i] and c[j]) to the collection of clusters
-	  	update dendrogram
-	  	update distances, say Dist(c[i+j], c[k]), between the newly added cluster c[i+j] and the rest of the clusters c[k] into the collection using Lance-Williams formula
-	  end for
-	  return dendrogram*/
-
 	// Calculate initial distances between each pair of vertices
 	float **distanceArr = initDistanceArray(g->nVert);
 	for (int i = 0; i < g->nVert; i++) {
@@ -273,29 +285,16 @@ Dendrogram LanceWilliamsHAC(Graph g, int method) {
 		}
 	}
 
-	// // code to test if initDistance() works //
-	// for (int i = 0; i < g->nVert; i++) {
-	// 	for (int j = 0; j < g->nVert; j++) {
-	// 		printf("[%d][%d] = %.4f ", i, j, distanceArr[i][j]);
-	// 	}
-	// 	printf("\n");
-	// }
-	// printf("\n");
-	// // -------------it works------------- //
-
-	// make a struct that will hold the dendrograms --- index is equal to vertex
-	// DendrogramRep dRep = newDendrogramRep(g->nVert);
+	// make a struct that will hold the dendrograms - initially, i = vertex
 	DendrogramRep dRep = newDendrogramRep(g->nVert);
 		for (int i = 0; i < g->nVert; i++) {
 			Dendrogram d = newDendrogram(i, NULL, NULL);
 			dRep->dendA[i] = d;
 		}
 
-	// FOR LOOP TO FIND CLOSET CLUSTER AND UPDATE DENDROGRAM
+	// Loop to find closest clusters and update distance array, using selected method
 	for (int k = 1; k < g->nVert; k++) {
 		Coordinates coord = newCoordinates();
-		// do a check if coord doesn't find anything!!!!!!
-
 		// find both clusters
 		coord = findClosestClusters(coord, distanceArr, g->nVert);
 		// if function doesn't find coordinates
@@ -304,8 +303,6 @@ Dendrogram LanceWilliamsHAC(Graph g, int method) {
 		}
 		// remove both clusters and merge them, then add it to the index of whichever was smaller
 		removeClusters(coord->x, coord->y, dRep);
-		// resize array to n-1
-		// dRep->size--;
 		// update distanceArr using Lance-Williams method
 		if (method == 1) {
 			singleLinkage(distanceArr, coord->x, coord->y, g->nVert);
