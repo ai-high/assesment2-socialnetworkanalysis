@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+//double getNumPaths(ShortestPaths paths, double ***passes, int start, int cur, int end);
+
 NodeValues outDegreeCentrality(Graph g){
 
 	NodeValues *values = malloc(sizeof(NodeValues));
@@ -82,45 +84,68 @@ NodeValues closenessCentrality(Graph g){
 	return *values;
 }
 
+double getNumPaths(ShortestPaths paths, double ***passes, int start, int cur, int end){
+
+	if (cur == start) {return 1;}
+
+
+	double numPaths = 0;
+	PredNode *curNode = paths.pred[cur];
+	while (curNode) {
+		//printf ("Start: %d End: %d Cur: %d CurNode.v: %d\n",start,end, cur,curNode->v);
+		numPaths += getNumPaths(paths,passes,start,curNode->v,end);
+		curNode = curNode->next;
+	}
+	if (cur!=end){
+		//printf("%lf\n",numPaths);
+		passes[start][end][cur] += numPaths;
+	}
+	return numPaths;
+}
+
 NodeValues betweennessCentrality(Graph g){
 	NodeValues *values = malloc(sizeof(NodeValues));
 	values->noNodes = numVerticies(g);
-	values->values = malloc(sizeof(double)*numVerticies(g));
+	int nV = numVerticies(g);
+	values->values = malloc(sizeof(double)*(nV+5));
 
-	double numerator[numVerticies(g)-1];
-	for (int i = 0; i < numVerticies(g); i++) {
-		numerator[i] = 0;
-	}
-	double count;
-	for (int i = 0; i < numVerticies(g); i++) {
-		ShortestPaths paths = dijkstra(g, i);
-		for (int j = 0; j < numVerticies(g); j++)
+	double ***passes = malloc(sizeof(double**)*(nV+5));
+	double **numPaths = malloc(sizeof(double*)*(nV + 5));
+	for (int i = 0; i < nV; ++i)
+	{
+		passes[i] = malloc(sizeof(double*)*(nV+5));
+		numPaths[i] =  malloc(sizeof(double)*(nV+5));
+		for (int j = 0; j < nV; ++j)
 		{
-			if (i!=j) {
-				count = 0;
-				if (paths.pred[j]!=NULL) {
-					PredNode *tmp = paths.pred[j];
-					while(tmp!=NULL){
-						count++;
-						int x = tmp->v;
-						while(x!=i){
-							numerator[x]++;
-							x = paths.pred[x]->v;
-						}
-						tmp = tmp->next;
-						if(tmp==NULL) {
-							for (int i = 0; i < numVerticies(g); i++) {
-								if (numerator[i]!=0 && count!=0) {
-									values->values[i] = values->values[i] + numerator[i]/count;
-								}
-								numerator[i] = 0;
-							}
-						}	
-					}
-				}
+			numPaths[i][j] = 0;
+			passes[i][j] = malloc(sizeof(double)*(nV+5));
+			for (int k = 0; k < numVerticies(g); ++k)
+			{
+				passes[i][j][k] = 0;
 			}
 		}
+	}
+ 	ShortestPaths path;
+	for (int start = 0; start < numVerticies(g); start++) {
+		path = dijkstra(g, start);
+		for (int end = 0; end < numVerticies(g); end++)
+		{
+			if (start == end) continue;
+			numPaths[start][end] = getNumPaths(path, passes, start, end, end);
+		}
+	}
 
+	for (int start = 0; start < numVerticies(g); start++)
+	{
+		for (int end = 0; end < numVerticies(g); end++)
+		{
+			for (int cur = 0; cur < numVerticies(g); cur++)
+			{
+				if (cur==start|| cur==end) continue;
+				//printf("Start: %d End: %d Cur: %d Passes: %lf Paths: %lf\n",start,end,cur,passes[start][end][cur],numPaths[start][end]);
+				values->values[cur] += (numPaths[start][end] == 0) ? 0 : (passes[start][end][cur]/numPaths[start][end]);			
+			}
+		}
 	}
 
 
@@ -128,7 +153,7 @@ NodeValues betweennessCentrality(Graph g){
 }
 
 NodeValues betweennessCentralityNormalised(Graph g){
-	NodeValues values = betweennessCentrality( g);
+	NodeValues values = betweennessCentrality(g);
 	double n = numVerticies(g);
 	for (int i = 0; i < numVerticies(g); i++) {
 

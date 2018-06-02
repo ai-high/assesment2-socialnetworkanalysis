@@ -54,25 +54,76 @@ Graph readGraph(char* file) {
 	return g;
 }
 
+int getNumPaths(ShortestPaths paths, int ***passes, int start, int cur, int end){
+
+	if (cur == end) return 1;
+	int numPaths = 0;
+	PredNode *curNode = paths.pred[cur];
+	while (curNode) {
+		numPaths += getNumPaths(paths,passes,start,curNode->v,end);
+		curNode = curNode->next;
+	}
+	if (cur!=start){
+		passes[start][end][cur] += numPaths;
+	}
+
+}
+
+
 int main(void){
 
-	/*Graph g = newGraph(10);
-  	insertEdge(g,1, 2, 1);
-  	insertEdge(g,2, 1, 10);
-  	insertEdge(g,4, 2, 60);
-  	insertEdge(g,3, 2, 6);
-  	insertEdge(g,1, 4, 2);
-  
-  	insertEdge(g,2, 3, 1);
-  	insertEdge(g,1, 0, 1);
-  	insertEdge(g,0, 4, 2);
-  	insertEdge(g,3, 4, 1);
-  	insertEdge(g,3, 1, 5);
-  	showGraph(g);
-	dijkstra(g, 0);*/
+	Graph g = readGraph("graphs/2.in");
 
-	Graph g = readGraph("graphs/6.in");
-	double numerator[numVerticies(g)-1];
+	int ***passes = malloc(sizeof(**int)*numVerticies(g));
+	int **numPaths = malloc(sizeof(*int)*numVerticies(g));
+	for (int i = 0; i < count; ++i)
+	{
+		passes[i] = malloc(sizeof(*int)*numVerticies(g));
+		numPaths[i] =  malloc(sizeof(int)*numVerticies(g));
+		for (int j = 0; j < count; ++j)
+		{
+			numPaths[i][j] = 0;
+			passes[i][j] = malloc(sizeof(int)*numVerticies(g));
+			for (int k = 0; k < count; ++k)
+			{
+				passes[i][j][k] = 0;
+			}
+		}
+	}
+
+	for (int s = 0; s < numVerticies(g); ++s) {
+		printf("node: %d\n",s);
+		ShortestPaths paths = dijkstra(g, s);
+		for (int t = 0; t < numVerticies(g); ++t)
+		{
+			numPaths[s][t] = getNumPaths(paths, passes, s, s, t);
+		}
+	}
+
+	for (int i = 0; i < count; ++i)
+	{
+		for (int j = 0; j < count; ++j)
+		{
+			for (int k = 0; k < count; ++k)
+			{
+				if (numPaths[i][j]!=0)
+				{
+					values[k] += passes[i][j][k]/numPaths[i][j];
+				}
+			}
+		}
+	}
+
+
+	return 0;
+}
+
+
+
+
+
+
+	/*double numerator[numVerticies(g)-1];
 	double values[numVerticies(g)-1];
 	for (int i = 0; i < numVerticies(g); i++) {
 		numerator[i] = 0;
@@ -121,16 +172,11 @@ int main(void){
 	for (int i = 0; i < numVerticies(g); i++) {
 		printf(" [%lf] ",values[i]);
 	}
-	printf("\n");
+	printf("\n");*/
 
 
 
 
 	
-
-
-
-	return 0;
-}
 
 // gcc zacTest.c Graph.c Graph.h Dijkstra.c Dijkstra.h PQ.h PQ.c
