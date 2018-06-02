@@ -1,5 +1,5 @@
 /*
- * Graph Visulaiser
+ * Graph Visualiser
  * Written By Zain Afzal for cs2521 2018 s1
  *
  * Creates a JSON rep of a graph for use

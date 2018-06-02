@@ -94,6 +94,27 @@ ShortestPaths dijkstra(Graph g, Vertex v) {
 
 void showShortestPaths(ShortestPaths paths) {
 
+	int i = 0;
+	printf("Node %d\n",paths.src);
+	printf("  Distance\n");
+	for (i = 0; i < paths.noNodes; i++) {
+			if(i == paths.src)
+	    	printf("    %d : X\n",i);
+			else
+				printf("    %d : %d\n",i,paths.dist[i]);
+	}
+	printf("  Preds\n");
+	for (i = 0; i < paths.noNodes; i++) {
+		printf("    %d : ",i);
+		PredNode* curr = paths.pred[i];
+		while(curr!=NULL) {
+			printf("[%d]->",curr->v);
+			curr = curr->next;
+		}
+		printf("NULL\n");
+	}
+
+
 }
 
 
